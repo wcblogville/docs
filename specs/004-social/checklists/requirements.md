@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -42,3 +42,5 @@
   2. FR-018 (SOC-02): 없는·다른 글의·삭제된 댓글을 대상으로 한 답글 요청을 거부할지, 현재처럼 받아 줄지.
 - 나머지 원본 열린 질문은 spec의 Assumptions "기본값 (원본 열린 질문)"과 Out of Scope에 기록했다.
 - 위 2개를 정하면 `/speckit-plan`으로 넘어갈 수 있다.
+- 2026-10-07 clarify 반영: FR-013(삭제 권한을 댓글 작성자·그 글이 올라간 블로그의 주인·관리자로), FR-018(없는·다른 글의·삭제된 댓글 대상 답글은 저장 거부, 입력 내용 유지)을 확정해 `[NEEDS CLARIFICATION]` 0개. 다른 spec 결정 D2(탈퇴 회원 댓글, Out of Scope 문장)·D11(FR-033 공감 알림, 새 FR-055 댓글 알림·FR-056 답글 알림)·D15(FR-042 이웃 새 글 순서)를 본문에 맞췄고, D6(보상 회수 안 함)은 이미 일치해 고치지 않았다. 구현 용어 재검색 0건, 16/16 통과.
+- 2026-10-07 clarify 반영 점검: (1) D2와 어긋나던 FR-014·Assumptions의 "삭제 자리는 항상 남고 작성자 닉네임·캐릭터가 보임"을 작성자·블로그 주인·관리자가 지운 경우로 좁히고, 회원 탈퇴는 AUTH-06 처리(자리 없이 함께 삭제, 다른 사람의 답글이 달린 댓글만 자리 남김, 그 자리에 닉네임·캐릭터 안 보임)를 따르게 했다 (Out of Scope·Edge Cases·Key Entities 함께 맞춤). Clarifications의 D2 줄도 결정 원문("기존 댓글 삭제 규칙대로", constitution VII)에 맞췄다. (2) D9와 어긋나던 Assumptions "답글 오류 문구는 댓글과 같다"에 답글 대상 댓글 오류 예외를 적었다. (3) D4와 어긋나던 Out of Scope "검색은 내 블로그 안에서"를 "회원이 자기 블로그 홈에서 마을 전체 공개 글·블로그를 검색, 마을 소식·광장에는 검색창 없음"으로 고쳤다. (4) FR-042에 최신순 기준(마을 소식과 같음)과 페이지를 넘겨도 순서가 이어짐을 더했다 (003-post FR-035와 같음). (5) GAME-08 알림과 헷갈리지 않게 이웃 버튼의 "완료 알림"을 "완료 안내"로 바꿨다. FR 56개(FR-055·FR-056은 번호를 바꾸지 않으려고 각 절 끝에 둠) 모두 원본 ID 있음, 마커 0개, 구현 용어 0건, 16/16 통과.

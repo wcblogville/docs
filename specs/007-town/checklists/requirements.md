@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -41,3 +41,5 @@
   2. FR-036 💛 이웃 새 글에서 즐겨찾은 이웃 글을 올리는 범위(전부 / 최근 7일) (TOWN-08, SOC-04·POST-05와 협의)
   3. FR-059 집 단계를 올리는 조건(레벨 / 공개 글 수 / 코인 증축) (TOWN-11)
 - 나머지 원본 열린 질문은 Assumptions의 "기본값 (원본 열린 질문)"으로 기록함.
+- 2026-10-07 clarify 반영: 위 3개를 결정으로 바꾸고 spec에 Clarifications(Session 2026-10-07)를 추가함 — FR-029 인기 기준(이웃 수 많은 순, 같으면 최근 공개 글 순, 공개 글 없는 블로그 제외), FR-036 최근 7일(한국 시간) 안의 즐겨찾은 이웃 글만 위로, FR-059 집 단계 = 주인 레벨(Lv.1~9 / 10~29 / 30 이상, 증축 구매 없음). 파급으로 FR-048 성장 아이템 수치를 상점 첫 출시 초기값(필요 레벨 포함)으로 맞춤. 남은 표시 0개, 전 항목 다시 점검해 16/16 통과.
+- 2026-10-07 clarify 반영 점검: Assumptions "기본값 (원본 열린 질문)" 중 결정으로 바뀐 부분(TOWN-04 인기 기준·공개 글 없는 블로그 제외, TOWN-09 성장 아이템 가격·필요 레벨·성장치)을 기본값이 아닌 clarify 결정으로 고쳐 적음. 상점 부제의 판매 분류에 배경을 넣어 상점 첫 출시 목록(D13)과 맞춤. FR-036·Assumptions의 이웃 새 글 근거를 SOC-04·POST-05로 바로잡음. Key Entities 성장 아이템에 필요 레벨 추가, US5 시나리오 1을 "상위 100곳(적으면 전부)"으로 FR-029와 맞춤. `[NEEDS CLARIFICATION]` 0개, 구현 용어 재검색 0건, FR-001 ~ FR-061 연속·원본 ID 모두 있음, 16/16 통과.

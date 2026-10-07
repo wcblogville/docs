@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -41,3 +41,5 @@
   1. FR-010 (AUTH-03): 아이디로 만든 기본 블로그 주소·닉네임이 예약 주소나 다른 회원이 이미 쓰는 주소·닉네임과 겹칠 때 가입 거부 vs 다른 기본값으로 가입 허용
   2. FR-052 (AUTH-06): 탈퇴한 회원이 남의 글에 단 댓글(과 답글) 삭제 vs "탈퇴한 회원" 표시로 유지
 - 나머지 원본 열린 질문은 spec Assumptions에 "기본값 (원본 열린 질문)"으로 기록했다.
+- 2026-10-07 clarify 반영: FR-010(D1, 예약어 아이디 거부·다른 회원 아이디와 같은 주소/닉네임 금지)과 FR-052(D2, 탈퇴 회원 댓글·답글 함께 삭제)의 [NEEDS CLARIFICATION] 2개를 본문으로 옮기고, 파급 결정 D8(관리자 댓글 삭제는 SOC-01)에 맞춰 Assumptions·범위 밖 문장을 고쳤다. 재점검 결과 16/16 항목 통과.
+- 2026-10-07 반영 재검토: Clarifications를 이 spec의 질문 2개(D1, D2)로 줄이고 답을 결정 원문에 맞췄다(D8 줄은 파급이라 빼고, D1 보장을 지키는 가입 쪽 보완 규칙은 Assumptions에 근거와 함께 적었다). 관리자 계정이 가입 확인을 받지 않는 범위를 Key Entities·SC-013·Assumptions에 맞추고, 탈퇴와 보상(D6)·답글 거부(D9)의 관계를 Edge Cases에 적었다. 16/16 유지.

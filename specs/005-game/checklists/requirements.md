@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -41,4 +41,6 @@
 - 검증 2회차: 1회차에서 하루 최대 경험치(원본 190)가 새 출석 규칙과 맞지 않아 Assumptions 의존성에 210으로 보정해 적었다. 그 밖의 실패 항목 없음.
 - 남은 항목: `[NEEDS CLARIFICATION]` 2개 (FR-020 출석 일차별 보상 숫자 확정, FR-045 알림함 2단계 공감 · 댓글 알림의 범위(GAME vs SOC)).
   `/speckit-clarify`에서 정한 뒤 체크한다. 나머지 원본 열린 질문은 Assumptions에 "기본값 (원본 열린 질문)"으로 정리했다.
+- 2026-10-07 clarify 반영: FR-020 출석 일차별 보상 제안값 확정(하루 최대 경험치 210), FR-045 알림함 2단계(공감 · 댓글 · 답글 알림)를 GAME-08 범위로 확정, 다른 spec 결정 D6(보상 회수 안 함 → FR-016 확정) · D12(이미 산 캐릭터 계속 장착 → FR-005) 반영. 하루 최대 경험치 210 문장은 Assumptions 의존성에서 FR-020으로 옮겼다. `[NEEDS CLARIFICATION]` 0개, 모든 항목 통과.
+- 2026-10-07 clarify 반영 점검: 2단계 알림 표가 행동한 회원의 닉네임을 보여주게 되어, 탈퇴한 회원의 댓글 · 답글을 함께 지우는 결정(D2, AUTH-06)과 맞추려고 FR-046 · 알림 엔티티 · Edge Cases에 "행동한 회원이 탈퇴하면 그 알림도 지운다"를 넣었다. FR-045에 답글 알림은 글 주인이 아니라 원댓글 작성자가 받는다고 밝혀 SOC 영역 spec과 맞췄고, SC-011에 코인을 넣어 FR-016과 맞췄다. 다시 확인한 결과 모든 항목 통과.
 - Items marked incomplete require spec updates before `/speckit-clarify` or `/speckit-plan`

@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -42,3 +42,5 @@
   3. FR-047 (POST-07·POST-09): 이미 내 다른 글에 붙은 첨부를 다른 글 본문에 넣을 때의 처리 (다시 올림 / 뺌 / 옮김)
 - 나머지 원본 열린 질문은 spec Assumptions에 "기본값 (원본 열린 질문)"으로 정리했다. `/speckit-clarify`에서 위 3개를 정한 뒤 `/speckit-plan`으로 간다.
 - 2026-10-07 설계 변경(온보딩 없음, 카테고리 2단계, 첨부는 글에 붙음, 비공개 글 첨부는 주인만, 로그인 유지 2시간)을 목표 동작으로 반영했음을 확인했다.
+- 2026-10-07 clarify 반영: 조회수는 같은 브라우저 기준 글마다 한국 시간 하루 1번(POST-06), 글을 지워도 보상 회수 없음(POST-01·GAME-05), 내 다른 글의 첨부를 붙여 넣으면 새로 다시 올림·저장 시 이 글에 붙일 수 없는 첨부는 뺌(POST-07·POST-09), 이웃 새 글은 최근 7일 안 즐겨찾은 이웃 글을 맨 위에(TOWN-08 파급). `[NEEDS CLARIFICATION]` 0개, 16/16 항목 통과.
+- 2026-10-07 clarify 반영 점검: 글 삭제 때 회수하지 않는 공감 보상의 받는 사람을 "다른 회원"에서 "글 주인"으로 바로잡음(US2 시나리오 8, FR-016, GAME-05·SOC-03과 맞춤). Key Entities 첨부를 FR-047과 맞춤(다시 올리는 것은 내 다른 글의 첨부만, 남의 첨부·다른 글의 첨부는 저장 때 뺌). FR-047의 "붙일 수 있는 첨부"에서 지금 쓰는 프로필 사진을 빼고, FR-059·SC-011·Assumptions에 프로필 사진 예외(정리하지 않음, 누구나 봄, BLOG-04)를 넣음. 조회수는 BLOG-06과 같은 기준이 되도록 FR-046에 "브라우저에서 실제로 열었을 때"를 넣고, Assumptions의 검색 로봇 기본값을 이 기준에 맞춰 고침. US7 시나리오 1의 조건을 "아직 열지 않은 글"에서 "아직 조회수가 오르지 않은 글"로 고침. `[NEEDS CLARIFICATION]` 0개, 구현 용어 재검색 0건, FR-001 ~ FR-066 연속·원본 ID 모두 있음, 16/16 통과.

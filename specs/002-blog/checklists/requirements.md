@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -32,6 +32,7 @@
 ## Notes
 
 - Items marked incomplete require spec updates before `/speckit-clarify` or `/speckit-plan`
+- 2026-10-07 clarify 반영: 남은 [NEEDS CLARIFICATION] 3개(가입 아이디 기본 주소, 예전 주소 재사용, BLOG-07 검색 범위)를 결정대로 본문(Clarifications, User Story 1·3·6, Edge Cases, FR-001·009·010·018·019·050, Key Entities, SC-001·012·013, Assumptions)에 옮기고 전 항목을 다시 확인해 모두 통과 (16/16).
 
 ### 검증 기록
 
