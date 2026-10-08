@@ -32,11 +32,11 @@ description: "블로그 (BLOG) 구현 작업 목록"
 
 **Purpose**: 구현 전 확인과 테스트 골격
 
-- [ ] T001 설치된 패키지 문서로 R-26 목록을 확인하고 결과를 PR 메모에 적는다: Next.js 16 Server Action Origin 확인·`next/form`, React 19 `useActionState` 폼 초기화, Drizzle `.for("update")`·복합 FK `.onDelete("set null")` 생성 SQL, zod 4 문자열 길이 단위, Better Auth username 소문자 처리 (`node_modules/next/dist/docs/`, `node_modules/drizzle-orm/`, `node_modules/zod/` 참조)
-- [ ] T002 마이그레이션 전 개발 DB 데이터 점검(research R-28)을 `psql`/`npm run db:studio`로 실행한다: 예약어 16개와 같은 `blogs.slug`(관리자 `notice` 제외), 다른 회원 `users.username`과 같은 slug, 다른 회원 아이디와 대소문자 무시로 같은 `profiles.nickname`, `char_length(blogs.description) > 160` — 모두 0건이어야 하고 결과를 PR 메모에 적는다
-- [ ] T003 [P] 단위 테스트 파일 골격을 만든다: `scripts/test-blog.ts` (`tsx`로 실행, 기존 `scripts/test-*.ts`의 자체 `expect` 관례, 실패 시 종료 코드 1)
-- [ ] T004 [P] `package.json`의 `scripts`에 `"test:blog": "tsx scripts/test-blog.ts"`를 추가하고 `test` 체인 끝에 `&& npm run test:blog`를 붙인다 [추가]
-- [ ] T005 [P] 순수 규칙 모듈 빈 파일과 export 이름을 만든다: `src/lib/blog.ts` (`SLUG_RE`, `charCount`, `toLikePattern`, `parseSearchQuery`, `buildCategoryTree`, `swapPosition`, `ROOF_COLORS`)
+- [x] T001 설치된 패키지 문서로 R-26 목록을 확인하고 결과를 PR 메모에 적는다: Next.js 16 Server Action Origin 확인·`next/form`, React 19 `useActionState` 폼 초기화, Drizzle `.for("update")`·복합 FK `.onDelete("set null")` 생성 SQL, zod 4 문자열 길이 단위, Better Auth username 소문자 처리 (`node_modules/next/dist/docs/`, `node_modules/drizzle-orm/`, `node_modules/zod/` 참조)
+- [x] T002 마이그레이션 전 개발 DB 데이터 점검(research R-28)을 `psql`/`npm run db:studio`로 실행한다: 예약어 16개와 같은 `blogs.slug`(관리자 `notice` 제외), 다른 회원 `users.username`과 같은 slug, 다른 회원 아이디와 대소문자 무시로 같은 `profiles.nickname`, `char_length(blogs.description) > 160` — 모두 0건이어야 하고 결과를 PR 메모에 적는다
+- [x] T003 [P] 단위 테스트 파일 골격을 만든다: `scripts/test-blog.ts` (`tsx`로 실행, 기존 `scripts/test-*.ts`의 자체 `expect` 관례, 실패 시 종료 코드 1)
+- [x] T004 [P] `package.json`의 `scripts`에 `"test:blog": "tsx scripts/test-blog.ts"`를 추가하고 `test` 체인 끝에 `&& npm run test:blog`를 붙인다 [추가]
+- [x] T005 [P] 순수 규칙 모듈 빈 파일과 export 이름을 만든다: `src/lib/blog.ts` (`SLUG_RE`, `charCount`, `toLikePattern`, `parseSearchQuery`, `buildCategoryTree`, `swapPosition`, `ROOF_COLORS`)
 
 ---
 
@@ -48,18 +48,18 @@ description: "블로그 (BLOG) 구현 작업 목록"
 
 ### Tests for Foundational (먼저 쓰고 실패 확인)
 
-- [ ] T006 `scripts/test-blog.ts`에 순수 규칙 시험을 쓴다 (quickstart 1절 표): 주소 정규화 `  My_Blog ` → `my_blog`와 형식 `^[a-z0-9_]{3,20}$` 통과/거부, 예약어 16개(`admin` `api` `town` `feed` `shop` `closet` `write` `settings` `blog` `onboarding` `farm` `attendance` `tags` `wallet` `files` `notice`)와 `Notice` → 예약어, `charCount("😀") === 1`, `toLikePattern("100%_\\")`가 `%`·`_`·`\`를 이스케이프, `parseSearchQuery("  ")` → 빈 검색어·51자 → 무시, `buildCategoryTree` 정렬 `position` → `id`·소분류가 제 대분류 아래, `swapPosition` 맨 위 ▲·맨 아래 ▼는 그대로·결과 0..n-1 빈틈 없음
+- [x] T006 `scripts/test-blog.ts`에 순수 규칙 시험을 쓴다 (quickstart 1절 표): 주소 정규화 `  My_Blog ` → `my_blog`와 형식 `^[a-z0-9_]{3,20}$` 통과/거부, 예약어 16개(`admin` `api` `town` `feed` `shop` `closet` `write` `settings` `blog` `onboarding` `farm` `attendance` `tags` `wallet` `files` `notice`)와 `Notice` → 예약어, `charCount("😀") === 1`, `toLikePattern("100%_\\")`가 `%`·`_`·`\`를 이스케이프, `parseSearchQuery("  ")` → 빈 검색어·51자 → 무시, `buildCategoryTree` 정렬 `position` → `id`·소분류가 제 대분류 아래, `swapPosition` 맨 위 ▲·맨 아래 ▼는 그대로·결과 0..n-1 빈틈 없음
 
 ### Implementation for Foundational
 
-- [ ] T007 `src/lib/blog.ts`에 `SLUG_RE = /^[a-z0-9_]{3,20}$/`과 `charCount`(앞뒤 공백 제거 뒤 코드 포인트 수, `[...s].length`)를 구현한다. 정규화·예약어 판정은 auth의 `src/lib/names.ts`(`normalizeName`, `isReservedName`, `RESERVED_NAMES`)를 import해 쓰고, 그 모듈이 아직 없으면 auth와 합의한 16개 목록 값만 PR에 적는다 (research R-02, R-07)
-- [ ] T008 [P] `src/lib/blog.ts`에 `toLikePattern(q)`(`\` → `\\`, `%` → `\%`, `_` → `\_` 뒤 `%…%`)와 `parseSearchQuery(raw)`(앞뒤 공백 제거, 0자 → `{ empty: true }`, 51자 이상 → `null` 무시, 1~50자 → 검색어)를 구현한다 (FR-053, research R-16·R-17)
-- [ ] T009 [P] `src/lib/blog.ts`에 `buildCategoryTree(categories, subcategories)`(대분류·소분류 모두 `position` → `id` 정렬, 소분류는 `categoryId`로 묶음)와 `swapPosition(ids, id, direction)`(`-1`/`1`만, 끝이면 그대로, 0부터 다시 매긴 `{id, position}[]`)를 구현한다 (FR-039·040, research R-12·R-14)
-- [ ] T010 [P] `src/lib/blog.ts`에 `ROOF_COLORS = ["red","orange","yellow","green","sky","blue","purple","brown"] as const`를 정의한다 (TOWN-07 요청, research R-22)
-- [ ] T011 `src/app/settings/blog/actions.ts`의 `FormState`를 `{ error?: string; ok?: number; values?: Record<string, string> }`로 바꾸고, 길이 검사를 `charCount`로 바꾼다 (contracts/blog-settings.md 0절, research R-07·R-08)
-- [ ] T012 `src/db/schema.ts`의 `blogs` 블록에 `roofColor: text("roof_color")`(NULL 허용)와 CHECK `blogs_roof_color_check`(NULL 또는 `ROOF_COLORS` 8색), CHECK `blogs_description_check`(`char_length(description) <= 160`)를 추가한다 (B-M2, data-model 2.1)
-- [ ] T013 `npm run db:generate`로 `drizzle/NNNN_blog_roof_description.sql`과 `drizzle/meta/` 스냅숏을 만들고 SQL 맨 위에 `-- BLOG-03, TOWN-07 (2026-10-07): 소개 160자 CHECK, 지붕 색 칸` 주석을 단 뒤 `npm run db:migrate`로 적용한다. T002에서 160자 초과 소개가 있으면 먼저 그 행을 고친다. town 단계 11 전에 merge한다 (research R-22)
-- [ ] T014 `npm test`(`test:blog` 포함)와 `npx tsc --noEmit`, `npx eslint`가 통과하는지 확인한다
+- [x] T007 `src/lib/blog.ts`에 `SLUG_RE = /^[a-z0-9_]{3,20}$/`과 `charCount`(앞뒤 공백 제거 뒤 코드 포인트 수, `[...s].length`)를 구현한다. 정규화·예약어 판정은 auth의 `src/lib/names.ts`(`normalizeName`, `isReservedName`, `RESERVED_NAMES`)를 import해 쓰고, 그 모듈이 아직 없으면 auth와 합의한 16개 목록 값만 PR에 적는다 (research R-02, R-07)
+- [x] T008 [P] `src/lib/blog.ts`에 `toLikePattern(q)`(`\` → `\\`, `%` → `\%`, `_` → `\_` 뒤 `%…%`)와 `parseSearchQuery(raw)`(앞뒤 공백 제거, 0자 → `{ empty: true }`, 51자 이상 → `null` 무시, 1~50자 → 검색어)를 구현한다 (FR-053, research R-16·R-17)
+- [x] T009 [P] `src/lib/blog.ts`에 `buildCategoryTree(categories, subcategories)`(대분류·소분류 모두 `position` → `id` 정렬, 소분류는 `categoryId`로 묶음)와 `swapPosition(ids, id, direction)`(`-1`/`1`만, 끝이면 그대로, 0부터 다시 매긴 `{id, position}[]`)를 구현한다 (FR-039·040, research R-12·R-14)
+- [x] T010 [P] `src/lib/blog.ts`에 `ROOF_COLORS = ["red","orange","yellow","green","sky","blue","purple","brown"] as const`를 정의한다 (TOWN-07 요청, research R-22)
+- [x] T011 `src/app/settings/blog/actions.ts`의 `FormState`를 `{ error?: string; ok?: number; values?: Record<string, string> }`로 바꾸고, 길이 검사를 `charCount`로 바꾼다 (contracts/blog-settings.md 0절, research R-07·R-08)
+- [x] T012 `src/db/schema.ts`의 `blogs` 블록에 `roofColor: text("roof_color")`(NULL 허용)와 CHECK `blogs_roof_color_check`(NULL 또는 `ROOF_COLORS` 8색), CHECK `blogs_description_check`(`char_length(description) <= 160`)를 추가한다 (B-M2, data-model 2.1)
+- [x] T013 `npm run db:generate`로 `drizzle/NNNN_blog_roof_description.sql`과 `drizzle/meta/` 스냅숏을 만들고 SQL 맨 위에 `-- BLOG-03, TOWN-07 (2026-10-07): 소개 160자 CHECK, 지붕 색 칸` 주석을 단 뒤 `npm run db:migrate`로 적용한다. T002에서 160자 초과 소개가 있으면 먼저 그 행을 고친다. town 단계 11 전에 merge한다 (research R-22)
+- [x] T014 `npm test`(`test:blog` 포함)와 `npx tsc --noEmit`, `npx eslint`가 통과하는지 확인한다
 
 **Checkpoint**: 순수 규칙·폼 결과 형식·B-M2 준비 완료 — 사용자 스토리 작업 시작 가능
 
@@ -73,14 +73,14 @@ description: "블로그 (BLOG) 구현 작업 목록"
 
 ### Tests for User Story 1
 
-- [ ] T015 [US1] `e2e/blog-home.mjs`를 새로 만들고 US1 시나리오를 쓴다 (실행마다 새 회원, `pg`로 DB 확인): 가입 직후 `blogs` 1개·`slug` = 아이디·`title` = `{아이디}의 블로그`·`description` = `''`·배경 초원·대분류 "일상" 1개·광장 이동(US1-1·8, SC-001), 광장 내 집과 `/settings/blog`의 `내 블로그로 →`가 `/@{아이디}`(US1-2, FR-007), 같은 회원 블로그 INSERT를 `blogs_owner_id_unique`가 거부·동시 두 요청도 1개(US1-4), 블로그 홈·관리·꾸미기에 블로그 만들기·지우기 버튼 없음(US1-5), `npm run admin:create` 두 번 실행해도 `/@notice` 1개·이름 `Blogville 공지사항`·소개 `마을 소식과 업데이트를 알려드려요`·대분류 "공지"(US1-6), 아이디 `town`·`notice`·`Admin` 가입 → `이 아이디는 쓸 수 없어요`·회원·블로그 0(US1-7, SC-012)
+- [x] T015 [US1] `e2e/blog-home.mjs`를 새로 만들고 US1 시나리오를 쓴다 (실행마다 새 회원, `pg`로 DB 확인): 가입 직후 `blogs` 1개·`slug` = 아이디·`title` = `{아이디}의 블로그`·`description` = `''`·배경 초원·대분류 "일상" 1개·광장 이동(US1-1·8, SC-001), 광장 내 집과 `/settings/blog`의 `내 블로그로 →`가 `/@{아이디}`(US1-2, FR-007), 같은 회원 블로그 INSERT를 `blogs_owner_id_unique`가 거부·동시 두 요청도 1개(US1-4), 블로그 홈·관리·꾸미기에 블로그 만들기·지우기 버튼 없음(US1-5), `npm run admin:create` 두 번 실행해도 `/@notice` 1개·이름 `Blogville 공지사항`·소개 `마을 소식과 업데이트를 알려드려요`·대분류 "공지"(US1-6), 아이디 `town`·`notice`·`Admin` 가입 → `이 아이디는 쓸 수 없어요`·회원·블로그 0(US1-7, SC-012)
 
 ### Implementation for User Story 1
 
-- [ ] T016 [US1] auth와 가입 블로그 기본값을 확정한다: 이름 `{아이디}의 블로그`, 주소 = 아이디(대체값 없음), 소개 `''`, 배경 초원, 대분류 "일상" 1개 (FR-001·002, research R-27). 값이 상수로 필요하면 `src/lib/blog.ts`에 `defaultBlogFor(username)`을 두고 auth 가입 트랜잭션이 import한다
-- [ ] T017 [US1] `scripts/create-admin.ts`가 관리자 블로그 `/@notice`(이름 `Blogville 공지사항`, 소개 `마을 소식과 업데이트를 알려드려요`, 대분류 "공지")를 만들고 다시 실행해도 늘지 않는지 확인하고, 어긋나면 고친다 (FR-006)
-- [ ] T018 [US1] 블로그 만들기·지우기 기능이 어디에도 없는지 `src/app/`, `src/components/blog/`를 검색해 확인한다 (FR-005, US1-5). 회원 삭제 CASCADE 경로는 T058에서 확인한다
-- [ ] T019 [US1] auth 단계 1 merge 뒤 `node e2e/blog-home.mjs <폴더>`의 US1 줄이 모두 `✅`인지 확인한다. 원자성(US1-3, SC-002)은 auth 검증 결과를 PR에 함께 적는다
+- [x] T016 [US1] auth와 가입 블로그 기본값을 확정한다: 이름 `{아이디}의 블로그`, 주소 = 아이디(대체값 없음), 소개 `''`, 배경 초원, 대분류 "일상" 1개 (FR-001·002, research R-27). 값이 상수로 필요하면 `src/lib/blog.ts`에 `defaultBlogFor(username)`을 두고 auth 가입 트랜잭션이 import한다
+- [x] T017 [US1] `scripts/create-admin.ts`가 관리자 블로그 `/@notice`(이름 `Blogville 공지사항`, 소개 `마을 소식과 업데이트를 알려드려요`, 대분류 "공지")를 만들고 다시 실행해도 늘지 않는지 확인하고, 어긋나면 고친다 (FR-006)
+- [x] T018 [US1] 블로그 만들기·지우기 기능이 어디에도 없는지 `src/app/`, `src/components/blog/`를 검색해 확인한다 (FR-005, US1-5). 회원 삭제 CASCADE 경로는 T058에서 확인한다
+- [x] T019 [US1] auth 단계 1 merge 뒤 `node e2e/blog-home.mjs <폴더>`의 US1 줄이 모두 `✅`인지 확인한다. 원자성(US1-3, SC-002)은 auth 검증 결과를 PR에 함께 적는다
 
 **Checkpoint**: 가입 = 블로그 보유가 확인됨
 
@@ -94,12 +94,12 @@ description: "블로그 (BLOG) 구현 작업 목록"
 
 ### Tests for User Story 2
 
-- [ ] T020 [US2] `e2e/blog-home.mjs`에 US2 시나리오를 더한다: 세 컨텍스트별 버튼(없음 / 이웃 / [✏️ 글쓰기] [🎨 꾸미기] [⚙️ 관리]), 비공개 글은 주인에게만 `🔒 비공개` 배지·카테고리 글 수 포함, 탭 제목 `{블로그 이름} | Blogville`(US2-1·3·4), `/@Notice`·없는 주소·다른 블로그 글 ID·남의 비공개 글·`abc`·`0`·`012`·`1e1`·`2147483648` → HTTP 404 `길을 잃었어요`(US2-2), 대분류 글 9개 이상에서 선택 → 노란 배경·2페이지 유지(US2-6), 글 없는 블로그 `🌱 아직 글이 없어요.`·[첫 글 쓰기]는 주인만(US2-7), 375px 가로 스크롤 0·주인 버튼 글자 한 줄·주인 버튼·[첫 글 쓰기]·블로그 이름 링크·카테고리 링크 44×44px 이상(US2-8, SC-004), `?category=1.5`·`?category=Infinity`·`?page=99999999999999999999` → 200 전체 글 1페이지(US2-9, SC-009)
+- [x] T020 [US2] `e2e/blog-home.mjs`에 US2 시나리오를 더한다: 세 컨텍스트별 버튼(없음 / 이웃 / [✏️ 글쓰기] [🎨 꾸미기] [⚙️ 관리]), 비공개 글은 주인에게만 `🔒 비공개` 배지·카테고리 글 수 포함, 탭 제목 `{블로그 이름} | Blogville`(US2-1·3·4), `/@Notice`·없는 주소·다른 블로그 글 ID·남의 비공개 글·`abc`·`0`·`012`·`1e1`·`2147483648` → HTTP 404 `길을 잃었어요`(US2-2), 대분류 글 9개 이상에서 선택 → 노란 배경·2페이지 유지(US2-6), 글 없는 블로그 `🌱 아직 글이 없어요.`·[첫 글 쓰기]는 주인만(US2-7), 375px 가로 스크롤 0·주인 버튼 글자 한 줄·주인 버튼·[첫 글 쓰기]·블로그 이름 링크·카테고리 링크 44×44px 이상(US2-8, SC-004), `?category=1.5`·`?category=Infinity`·`?page=99999999999999999999` → 200 전체 글 1페이지(US2-9, SC-009)
 
 ### Implementation for User Story 2
 
-- [ ] T021 [P] [US2] `src/components/blog/blog-header.tsx`에서 주인 버튼 3개([✏️ 글쓰기] [🎨 꾸미기] [⚙️ 관리])와 블로그 이름 링크를 375px에서도 44×44px 이상·`whitespace-nowrap`으로 고친다 (FR-059, research R-24)
-- [ ] T022 [P] [US2] `src/app/blog/[slug]/page.tsx`의 빈 목록 [첫 글 쓰기] 버튼과 기존 카테고리 링크(`px-2 py-1`)의 누르는 영역을 44×44px 이상으로 고친다 (FR-058·059). 페이지 번호(`src/components/pagination.tsx`)는 post 소유라 post에 요청만 한다
+- [x] T021 [P] [US2] `src/components/blog/blog-header.tsx`에서 주인 버튼 3개([✏️ 글쓰기] [🎨 꾸미기] [⚙️ 관리])와 블로그 이름 링크를 375px에서도 44×44px 이상·`whitespace-nowrap`으로 고친다 (FR-059, research R-24)
+- [x] T022 [P] [US2] `src/app/blog/[slug]/page.tsx`의 빈 목록 [첫 글 쓰기] 버튼과 기존 카테고리 링크(`px-2 py-1`)의 누르는 영역을 44×44px 이상으로 고친다 (FR-058·059). 페이지 번호(`src/components/pagination.tsx`)는 post 소유라 post에 요청만 한다
 - [ ] T023 [US2] `node e2e/blog-home.mjs`, `node e2e/params.mjs`, `node e2e/social.mjs`(US2-5 이웃 버튼), `node e2e/mobile.mjs`(US2-8)가 모두 `✅`인지 확인한다
 
 **Checkpoint**: US1 + US2로 "가입 → 내 블로그 홈 보기" MVP 완성
@@ -114,21 +114,21 @@ description: "블로그 (BLOG) 구현 작업 목록"
 
 ### Tests for User Story 3
 
-- [ ] T024 [US3] `e2e/blog-address.mjs`를 새로 만든다 (quickstart 3.2): 이름 `  새 이름  ` → `새 이름`·`저장했어요 ✓`·블로그 홈 제목·탭 제목·광장 내 집 아랫줄·글 카드 반영·60초 안(US3-1, SC-005·006), 공백만/41자/소개 161자 → `블로그 이름을 적어 주세요`/`블로그 이름은 40자까지예요`/`소개는 160자까지예요` 하나만·DB 그대로·칸에 보낸 값 남음(US3-2), 소개 비움 → 소개 줄 없음(US3-3), 주소 `My_Blog` → `my_blog`·`/@my_blog` 200·예전 주소 404·사이트 링크에 예전 주소 0개(US3-4, SC-005), `ab`/`town`/다른 회원 주소/다른 회원 아이디 → `주소는 영문 소문자, 숫자, _ 로 3~20자예요`/`이 주소는 쓸 수 없어요`/`이미 있는 주소예요`/`이미 있는 주소예요`(US3-5, SC-012), 아이디 주소 되돌리기 본인만(US3-9), 풀린 주소 즉시 다른 회원 사용(US3-10), 연속 5번 변경 성공(US3-11), 닉네임 정상·`가`/21자/다른 회원 닉네임/`Tester2` → `닉네임은 2자 이상이에요`/`닉네임은 20자까지예요`/`이미 있는 닉네임이에요`/`이미 있는 닉네임이에요`·`😀` 하나 → 500 없이 `닉네임은 2자 이상이에요`(US3-6), 같은 값으로 가입과 주소 변경 동시 → 한쪽만 성공(SC-012), 이름·소개 요청에 `slug`·`ownerId`를 섞어도 내 블로그 이름·소개만(US3-7, SC-008), 로그아웃 `/settings/blog` → `/`(US3-8)
+- [x] T024 [US3] `e2e/blog-address.mjs`를 새로 만든다 (quickstart 3.2): 이름 `  새 이름  ` → `새 이름`·`저장했어요 ✓`·블로그 홈 제목·탭 제목·광장 내 집 아랫줄·글 카드 반영·60초 안(US3-1, SC-005·006), 공백만/41자/소개 161자 → `블로그 이름을 적어 주세요`/`블로그 이름은 40자까지예요`/`소개는 160자까지예요` 하나만·DB 그대로·칸에 보낸 값 남음(US3-2), 소개 비움 → 소개 줄 없음(US3-3), 주소 `My_Blog` → `my_blog`·`/@my_blog` 200·예전 주소 404·사이트 링크에 예전 주소 0개(US3-4, SC-005), `ab`/`town`/다른 회원 주소/다른 회원 아이디 → `주소는 영문 소문자, 숫자, _ 로 3~20자예요`/`이 주소는 쓸 수 없어요`/`이미 있는 주소예요`/`이미 있는 주소예요`(US3-5, SC-012), 아이디 주소 되돌리기 본인만(US3-9), 풀린 주소 즉시 다른 회원 사용(US3-10), 연속 5번 변경 성공(US3-11), 닉네임 정상·`가`/21자/다른 회원 닉네임/`Tester2` → `닉네임은 2자 이상이에요`/`닉네임은 20자까지예요`/`이미 있는 닉네임이에요`/`이미 있는 닉네임이에요`·`😀` 하나 → 500 없이 `닉네임은 2자 이상이에요`(US3-6), 같은 값으로 가입과 주소 변경 동시 → 한쪽만 성공(SC-012), 이름·소개 요청에 `slug`·`ownerId`를 섞어도 내 블로그 이름·소개만(US3-7, SC-008), 로그아웃 `/settings/blog` → `/`(US3-8)
 
 ### Implementation for User Story 3
 
-- [ ] T025 [US3] `src/app/settings/blog/actions.ts`의 `updateBlogInfo`를 고친다: 입력은 `title`·`description`만 읽음, 검증 순서 이름 0자 → `블로그 이름을 적어 주세요` / 이름 41자 이상 → `블로그 이름은 40자까지예요` / 소개 161자 이상 → `소개는 160자까지예요`(코드 포인트, 첫 오류만), `UPDATE blogs SET title, description WHERE owner_id = 나`, 실패 시 `{ error, values: { title, description } }`, 성공 시 `{ ok: Date.now() }`와 `revalidatePath("/", "layout")` (FR-016·017·021, contracts/blog-settings.md 1절)
-- [ ] T026 [US3] `src/app/settings/blog/actions.ts`에 `updateBlogSlug(prev, formData)`를 새로 만든다: `requireMember()` → `normalizeName`(앞뒤 공백 제거·소문자) → `SLUG_RE` 아니면 `주소는 영문 소문자, 숫자, _ 로 3~20자예요` → 지금 주소와 같으면 저장 없이 `{ ok }` → `isReservedName`이면 `이 주소는 쓸 수 없어요`(단 `notice`는 `users.role = 'admin'`에게 허용, research R-05) → 트랜잭션 `lockName(tx, 새 주소)` → `findNameConflict(tx, 새 주소, { exceptUserId: 나 })`의 `username` 또는 `slug`가 참이면 `이미 있는 주소예요` → `UPDATE blogs SET slug WHERE owner_id = 나` → 23505(`blogs_slug_unique`)면 `이미 있는 주소예요`. 성공 `{ ok, values: { slug } }`, 실패 `{ error, values: { slug: 보낸 값 } }`, 보호 기간·횟수 제한·자동 이동 없음 (FR-009·010·018·021, contracts/blog-settings.md 2절, research R-03·R-04·R-06)
-- [ ] T027 [US3] `src/app/settings/blog/settings-forms.tsx`의 기본 정보 폼이 오류 때 `state.values`로 칸 값을 남기도록 고치고(React 19 폼 초기화 대응, research R-08), [저장] 왼쪽에 빨간 오류 한 줄 / 초록 `저장했어요 ✓`를 보이고, 소개 안내 `어떤 이야기를 쓰는 블로그인가요?`를 유지한다 (FR-016·017)
-- [ ] T028 [US3] `src/app/settings/blog/settings-forms.tsx`에 `BlogSlugForm` 컴포넌트를 새로 만든다: 라벨 `블로그 주소` *(plan 임시)*, `/@` + 입력칸(`maxLength=20`), [주소 바꾸기] *(plan 임시)*, 결과 문구는 버튼 왼쪽 한 줄, 성공 때 칸은 정규화된 값, 버튼 44×44px (contracts/blog-home.md 3절)
-- [ ] T029 [US3] `src/app/settings/blog/page.tsx`에서 `(주소는 바꿀 수 없어요)` 줄(현재 55행 부근)을 지우고 `BlogSlugForm`을 기본 정보 카드에 넣고, `내 블로그로 →` 링크를 44×44px 이상으로 고친다. 탭 제목 `블로그 관리 | Blogville`, 화면 제목 `⚙️ 블로그 관리`, 비로그인 `/` 이동을 유지한다 (FR-007·018·022)
-- [ ] T030 [P] [US3] `src/app/settings/account/nickname-actions.ts`를 새로 만들고 `updateNickname(prev, formData)`를 구현한다: `requireMember()` → `nickname`만 읽음 → 코드 포인트 2자 미만 `닉네임은 2자 이상이에요` / 21자 이상 `닉네임은 20자까지예요` → 지금 닉네임과 같으면 `{ ok }` → 트랜잭션 `lockName(tx, 닉네임)` → `findNameConflict`의 `username`이 참이면 `이미 있는 닉네임이에요`(아이디와는 대소문자 무시, 자기 아이디는 허용) → `UPDATE profiles SET nickname WHERE user_id = 나` → 23505(`profiles_nickname_unique`)면 `이미 있는 닉네임이에요` → `revalidatePath("/", "layout")`. 예약어 검사는 하지 않는다 (FR-019·020, contracts/profile-showcase.md 1절, research R-03)
-- [ ] T031 [P] [US3] `src/app/settings/account/nickname-form.tsx`를 새로 만든다 (클라이언트, `useActionState`): 라벨 `닉네임`, 지금 값이 채워진 칸(`maxLength=20`), [저장], 버튼 왼쪽 오류 빨간 한 줄 / 성공 `저장했어요 ✓` *(plan 임시)*, 오류 때 보낸 값 유지, 버튼 44×44px (contracts/blog-home.md 4절)
-- [ ] T032 [US3] auth 소유 `src/app/settings/account/page.tsx`의 "닉네임 자리"에 `<NicknameForm />` 한 줄을 끼운다 [추가] (research R-29, auth U9 골격 필요)
-- [ ] T033 [US3] 바뀐 이름·닉네임·주소가 블로그 홈 제목·탭 제목, 글 상세 `{블로그 이름} · {닉네임}`, 마을 소식·이웃 새 글·태그 글 카드 `{닉네임} · {블로그 이름}`, 광장 집 아랫줄·이웃집 패널, 관리자 화면 링크에서 DB 값을 읽어 그리는지(하드코딩 주소 없음) `src/` 전체에서 `/@`·`/blog/` 링크 생성 지점을 검색해 확인하고, `/blog/{주소}` 형식 링크가 남아 있으면 `/@{주소}`로 고친다 (FR-013·014·020, SC-005, research R-06)
-- [ ] T034 [US3] `e2e/params.mjs`에 `updateBlogSlug` 조작 인자(남의 값 섞기, 이상한 문자열)를 더한다 [추가]
-- [ ] T035 [US3] `node e2e/blog-address.mjs <폴더>`와 `node e2e/params.mjs`가 모두 `✅`인지 확인한다
+- [x] T025 [US3] `src/app/settings/blog/actions.ts`의 `updateBlogInfo`를 고친다: 입력은 `title`·`description`만 읽음, 검증 순서 이름 0자 → `블로그 이름을 적어 주세요` / 이름 41자 이상 → `블로그 이름은 40자까지예요` / 소개 161자 이상 → `소개는 160자까지예요`(코드 포인트, 첫 오류만), `UPDATE blogs SET title, description WHERE owner_id = 나`, 실패 시 `{ error, values: { title, description } }`, 성공 시 `{ ok: Date.now() }`와 `revalidatePath("/", "layout")` (FR-016·017·021, contracts/blog-settings.md 1절)
+- [x] T026 [US3] `src/app/settings/blog/actions.ts`에 `updateBlogSlug(prev, formData)`를 새로 만든다: `requireMember()` → `normalizeName`(앞뒤 공백 제거·소문자) → `SLUG_RE` 아니면 `주소는 영문 소문자, 숫자, _ 로 3~20자예요` → 지금 주소와 같으면 저장 없이 `{ ok }` → `isReservedName`이면 `이 주소는 쓸 수 없어요`(단 `notice`는 `users.role = 'admin'`에게 허용, research R-05) → 트랜잭션 `lockName(tx, 새 주소)` → `findNameConflict(tx, 새 주소, { exceptUserId: 나 })`의 `username` 또는 `slug`가 참이면 `이미 있는 주소예요` → `UPDATE blogs SET slug WHERE owner_id = 나` → 23505(`blogs_slug_unique`)면 `이미 있는 주소예요`. 성공 `{ ok, values: { slug } }`, 실패 `{ error, values: { slug: 보낸 값 } }`, 보호 기간·횟수 제한·자동 이동 없음 (FR-009·010·018·021, contracts/blog-settings.md 2절, research R-03·R-04·R-06)
+- [x] T027 [US3] `src/app/settings/blog/settings-forms.tsx`의 기본 정보 폼이 오류 때 `state.values`로 칸 값을 남기도록 고치고(React 19 폼 초기화 대응, research R-08), [저장] 왼쪽에 빨간 오류 한 줄 / 초록 `저장했어요 ✓`를 보이고, 소개 안내 `어떤 이야기를 쓰는 블로그인가요?`를 유지한다 (FR-016·017)
+- [x] T028 [US3] `src/app/settings/blog/settings-forms.tsx`에 `BlogSlugForm` 컴포넌트를 새로 만든다: 라벨 `블로그 주소` *(plan 임시)*, `/@` + 입력칸(`maxLength=20`), [주소 바꾸기] *(plan 임시)*, 결과 문구는 버튼 왼쪽 한 줄, 성공 때 칸은 정규화된 값, 버튼 44×44px (contracts/blog-home.md 3절)
+- [x] T029 [US3] `src/app/settings/blog/page.tsx`에서 `(주소는 바꿀 수 없어요)` 줄(현재 55행 부근)을 지우고 `BlogSlugForm`을 기본 정보 카드에 넣고, `내 블로그로 →` 링크를 44×44px 이상으로 고친다. 탭 제목 `블로그 관리 | Blogville`, 화면 제목 `⚙️ 블로그 관리`, 비로그인 `/` 이동을 유지한다 (FR-007·018·022)
+- [x] T030 [P] [US3] `src/app/settings/account/nickname-actions.ts`를 새로 만들고 `updateNickname(prev, formData)`를 구현한다: `requireMember()` → `nickname`만 읽음 → 코드 포인트 2자 미만 `닉네임은 2자 이상이에요` / 21자 이상 `닉네임은 20자까지예요` → 지금 닉네임과 같으면 `{ ok }` → 트랜잭션 `lockName(tx, 닉네임)` → `findNameConflict`의 `username`이 참이면 `이미 있는 닉네임이에요`(아이디와는 대소문자 무시, 자기 아이디는 허용) → `UPDATE profiles SET nickname WHERE user_id = 나` → 23505(`profiles_nickname_unique`)면 `이미 있는 닉네임이에요` → `revalidatePath("/", "layout")`. 예약어 검사는 하지 않는다 (FR-019·020, contracts/profile-showcase.md 1절, research R-03)
+- [x] T031 [P] [US3] `src/app/settings/account/nickname-form.tsx`를 새로 만든다 (클라이언트, `useActionState`): 라벨 `닉네임`, 지금 값이 채워진 칸(`maxLength=20`), [저장], 버튼 왼쪽 오류 빨간 한 줄 / 성공 `저장했어요 ✓` *(plan 임시)*, 오류 때 보낸 값 유지, 버튼 44×44px (contracts/blog-home.md 4절)
+- [x] T032 [US3] auth 소유 `src/app/settings/account/page.tsx`의 "닉네임 자리"에 `<NicknameForm />` 한 줄을 끼운다 [추가] (research R-29, auth U9 골격 필요)
+- [x] T033 [US3] 바뀐 이름·닉네임·주소가 블로그 홈 제목·탭 제목, 글 상세 `{블로그 이름} · {닉네임}`, 마을 소식·이웃 새 글·태그 글 카드 `{닉네임} · {블로그 이름}`, 광장 집 아랫줄·이웃집 패널, 관리자 화면 링크에서 DB 값을 읽어 그리는지(하드코딩 주소 없음) `src/` 전체에서 `/@`·`/blog/` 링크 생성 지점을 검색해 확인하고, `/blog/{주소}` 형식 링크가 남아 있으면 `/@{주소}`로 고친다 (FR-013·014·020, SC-005, research R-06)
+- [x] T034 [US3] `e2e/params.mjs`에 `updateBlogSlug` 조작 인자(남의 값 섞기, 이상한 문자열)를 더한다 [추가]
+- [x] T035 [US3] `node e2e/blog-address.mjs <폴더>`와 `node e2e/params.mjs`가 모두 `✅`인지 확인한다
 
 **Checkpoint**: 기본값으로 생긴 블로그·닉네임을 주인이 바꿀 수 있음
 
