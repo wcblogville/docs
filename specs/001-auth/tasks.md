@@ -216,13 +216,13 @@ description: "회원 / 인증 (AUTH) 구현 작업 목록"
 
 ### Tests for User Story 7
 
-- [ ] T063 [P] [US7] `e2e/account.mjs`에 quickstart 4.5의 12~20번을 추가한다: 회원 W 준비, 틀린 비밀번호 거부·행 수 그대로, 맞는 비밀번호 → `/`, W의 회원·로그인 수단·세션·프로필·블로그·글·원장·보유 아이템·출석·이웃·공감·첨부 행·실패 기록·알림 0행, W 아이디 로그인 `아이디 또는 비밀번호가 맞지 않아요`, `/@{W 주소}` 404, 댓글 자리 처리, HTML·RSC 응답에 W 닉네임·원문 0건, 같은 아이디 재가입 in `e2e/account.mjs`
+- [x] T063 [P] [US7] `e2e/account.mjs`에 quickstart 4.5의 12~20번을 추가한다: 회원 W 준비, 틀린 비밀번호 거부·행 수 그대로, 맞는 비밀번호 → `/`, W의 회원·로그인 수단·세션·프로필·블로그·글·원장·보유 아이템·출석·이웃·공감·첨부 행·실패 기록·알림 0행, W 아이디 로그인 `아이디 또는 비밀번호가 맞지 않아요`, `/@{W 주소}` 404, 댓글 자리 처리, HTML·RSC 응답에 W 닉네임·원문 0건, 같은 아이디 재가입 in `e2e/account.mjs`
 
 ### Implementation for User Story 7
 
-- [ ] T064 [US7] 탈퇴 트랜잭션을 추가한다 (data-model.md 3장 순서): 1) `lockUser(tx, 회원)`, 2) social의 `removeAuthorComments(tx, 회원)`, 3) `login_attempts`에서 그 아이디 행 삭제, 4) `users` 행 삭제(CASCADE로 세션·로그인 수단·프로필·블로그·글·원장·아이템 등). 하나라도 실패하면 전부 롤백 (FR-051, FR-052, research R11) in `src/server/account.ts`
-- [ ] T065 [US7] `deleteAccount(prev, formData)` Server Action을 추가한다: `requireMember()` 본인, 비밀번호 재확인(빈 칸·틀림 → 제안 문구 `비밀번호를 적어 주세요`·`비밀번호가 맞지 않아요`, 아무것도 지우지 않음), 성공 시 탈퇴 트랜잭션 → 세션 쿠키 삭제 → `/` (FR-050, contracts/account.md 4장) in `src/app/settings/account/actions.ts`
-- [ ] T066 [US7] 탈퇴 폼(비밀번호 입력, 제안 버튼 [회원 탈퇴], 처리 중 비활성, 44×44px)을 넣고 내 정보 화면에 붙인다 in `src/app/settings/account/account-forms.tsx`, `src/app/settings/account/page.tsx`
+- [x] T064 [US7] 탈퇴 트랜잭션을 추가한다 (data-model.md 3장 순서): 1) `lockUser(tx, 회원)`, 2) social의 `removeAuthorComments(tx, 회원)`, 3) `login_attempts`에서 그 아이디 행 삭제, 4) `users` 행 삭제(CASCADE로 세션·로그인 수단·프로필·블로그·글·원장·아이템 등). 하나라도 실패하면 전부 롤백 (FR-051, FR-052, research R11) in `src/server/account.ts`
+- [x] T065 [US7] `deleteAccount(prev, formData)` Server Action을 추가한다: `requireMember()` 본인, 비밀번호 재확인(빈 칸·틀림 → 제안 문구 `비밀번호를 적어 주세요`·`비밀번호가 맞지 않아요`, 아무것도 지우지 않음), 성공 시 탈퇴 트랜잭션 → 세션 쿠키 삭제 → `/` (FR-050, contracts/account.md 4장) in `src/app/settings/account/actions.ts`
+- [x] T066 [US7] 탈퇴 폼(비밀번호 입력, 제안 버튼 [회원 탈퇴], 처리 중 비활성, 44×44px)을 넣고 내 정보 화면에 붙인다 in `src/app/settings/account/account-forms.tsx`, `src/app/settings/account/page.tsx`
 
 **Checkpoint**: 모든 user story가 각각 단독으로 동작한다
 
@@ -232,12 +232,12 @@ description: "회원 / 인증 (AUTH) 구현 작업 목록"
 
 **Purpose**: 여러 이야기에 걸친 문서·접근성·최종 검증
 
-- [ ] T067 [P] 375px 회원 컨텍스트 `/settings/account`, 비로그인 컨텍스트 `/` 가로 스크롤 없음 확인을 추가한다 (FR-054, SC-011, quickstart 4.7) in `e2e/nonfunctional.mjs`
-- [ ] T068 [P] auth 담당 절을 고친다: 3.1·3.2(`users.username` NOT NULL·CHECK, 닉네임 2~20, `photo_key`), 3.3(`remember_me`, 2시간/7일 규칙), `login_attempts` 새 절, `accounts_user_provider_uq`, 3.14 탈퇴 삭제 규칙, 7장 (data-model.md 5장) in `docs/02-erd.md`
-- [ ] T069 [P] 로그인·온보딩 규칙을 고친다: `requireUser` 삭제·`requireMember`/`requireAdmin` 404, 라이브러리 HTTP 허용 목록, 이름 공용 모듈 위치 in `CLAUDE.md`
-- [ ] T070 [P] 기능 표(가입 통합, 로그인 유지, 시도 제한, 내 정보·연동, 탈퇴)와 스크립트 표(`test:auth`, `admin:create` 12자)를 고친다 in `README.md`
-- [ ] T071 quickstart 5장 DB 기준을 확인한다: 프로필·블로그 없는 회원 0, `role = 'user'`인 예약어 아이디 0, 가입 직후 주소·닉네임 = 아이디, 남의 아이디와 같은 주소·닉네임 0, `pg_dump --data-only`·서버 출력에서 테스트 비밀번호 원문 0건, 소셜 행 토큰 칸 모두 NULL (SC-002, SC-010, SC-013, FR-035)
-- [ ] T072 `npx tsc --noEmit`, `npx eslint`, `npm test`, quickstart 3장의 auth e2e 5개와 회귀 e2e 전체를 돌리고, 결과와 남은 문제(plan 1~15 중 미해결, 특히 CSRF 응답 코드·소셜 미확인 항목)를 PR에 적는다. `e2e/flow.mjs`가 낡았다는 사실은 고치지 않고 팀에 알린다 (plan 남은 문제 14)
+- [x] T067 [P] 375px 회원 컨텍스트 `/settings/account`, 비로그인 컨텍스트 `/` 가로 스크롤 없음 확인을 추가한다 (FR-054, SC-011, quickstart 4.7) in `e2e/nonfunctional.mjs`
+- [x] T068 [P] auth 담당 절을 고친다: 3.1·3.2(`users.username` NOT NULL·CHECK, 닉네임 2~20, `photo_key`), 3.3(`remember_me`, 2시간/7일 규칙), `login_attempts` 새 절, `accounts_user_provider_uq`, 3.14 탈퇴 삭제 규칙, 7장 (data-model.md 5장) in `docs/02-erd.md`
+- [x] T069 [P] 로그인·온보딩 규칙을 고친다: `requireUser` 삭제·`requireMember`/`requireAdmin` 404, 라이브러리 HTTP 허용 목록, 이름 공용 모듈 위치 in `CLAUDE.md`
+- [x] T070 [P] 기능 표(가입 통합, 로그인 유지, 시도 제한, 내 정보·연동, 탈퇴)와 스크립트 표(`test:auth`, `admin:create` 12자)를 고친다 in `README.md`
+- [x] T071 quickstart 5장 DB 기준을 확인한다: 프로필·블로그 없는 회원 0, `role = 'user'`인 예약어 아이디 0, 가입 직후 주소·닉네임 = 아이디, 남의 아이디와 같은 주소·닉네임 0, `pg_dump --data-only`·서버 출력에서 테스트 비밀번호 원문 0건, 소셜 행 토큰 칸 모두 NULL (SC-002, SC-010, SC-013, FR-035)
+- [x] T072 `npx tsc --noEmit`, `npx eslint`, `npm test`, quickstart 3장의 auth e2e 5개와 회귀 e2e 전체를 돌리고, 결과와 남은 문제(plan 1~15 중 미해결, 특히 CSRF 응답 코드·소셜 미확인 항목)를 PR에 적는다. `e2e/flow.mjs`가 낡았다는 사실은 고치지 않고 팀에 알린다 (plan 남은 문제 14)
 
 ---
 
