@@ -96,19 +96,19 @@ description: "회원 / 인증 (AUTH) 구현 작업 목록"
 
 ### Tests for User Story 2
 
-- [ ] T025 [P] [US2] `e2e/session.mjs`를 새로 만든다: quickstart 4.3의 1~12번(쿠키 `HttpOnly`·`SameSite=Lax`·만료 없음, `remember_me = false`·`expires_at` ≈ +2시간, 새 컨텍스트 `/write` → `/`, 100분 → 2시간 재연장, 만료 → `/`, 4-2 `dont_remember` 쿠키 삭제 + `get-session` 뒤 `updated_at` 2시간 10분 전 → `/`·세션 행 없음, 유지 7일·새 컨텍스트 유지, `SessionKeeper` 재연장, 유지 만료, 로그아웃, `TESTER`·공백 로그인, 빈 칸 `아이디와 비밀번호를 적어 주세요`, `들어가는 중...`, 다른 Origin 상태 변경 요청 거부·데이터 그대로). 시간 조건은 DB의 `sessions.expires_at`·`updated_at`을 당겨 만든다 in `e2e/session.mjs`
+- [x] T025 [P] [US2] `e2e/session.mjs`를 새로 만든다: quickstart 4.3의 1~12번(쿠키 `HttpOnly`·`SameSite=Lax`·만료 없음, `remember_me = false`·`expires_at` ≈ +2시간, 새 컨텍스트 `/write` → `/`, 100분 → 2시간 재연장, 만료 → `/`, 4-2 `dont_remember` 쿠키 삭제 + `get-session` 뒤 `updated_at` 2시간 10분 전 → `/`·세션 행 없음, 유지 7일·새 컨텍스트 유지, `SessionKeeper` 재연장, 유지 만료, 로그아웃, `TESTER`·공백 로그인, 빈 칸 `아이디와 비밀번호를 적어 주세요`, `들어가는 중...`, 다른 Origin 상태 변경 요청 거부·데이터 그대로). 시간 조건은 DB의 `sessions.expires_at`·`updated_at`을 당겨 만든다 in `e2e/session.mjs`
 
 ### Implementation for User Story 2
 
-- [ ] T026 [US2] `src/db/schema.ts`에 `sessions.remember_me` **boolean NOT NULL DEFAULT false**와 새 표 `loginAttempts`(`login_attempts`: `username` text PK + CHECK `char_length(username) BETWEEN 1 AND 64`, `failed_count` integer NOT NULL DEFAULT 0 + CHECK `failed_count >= 0`, `locked_until` timestamptz NULL, `updated_at` timestamptz NOT NULL DEFAULT now(), `users` FK 없음)를 추가하고 `npm run db:generate`로 마이그레이션 A4 "로그인 유지·시도 제한"을 만들어 적용한다 (FR-019~FR-021, FR-025) in `src/db/schema.ts`, `drizzle/`
-- [ ] T027 [US2] `src/lib/auth.ts`에 세션 설정을 넣는다: `session.additionalFields.rememberMe`(→ `remember_me`), 유지 안 함 세션은 `expires_at` = 지금 + 2시간·쿠키 Max-Age 없음, 유지 세션은 7일·라이브러리 1시간 단위 연장, 세션 생성 훅, 쿠키 `HttpOnly`·`SameSite=Lax`·배포(`https`) 때 `Secure` (FR-020, FR-021, FR-023, research R6·R14) in `src/lib/auth.ts`
-- [ ] T028 [US2] `getSession()`에 2시간 규칙을 넣는다: `remember_me = false`이고 `updated_at < now() - 2시간`이면 세션 행을 지우고 로그아웃으로 처리, 아니면 5분 단위로 `expires_at = now() + 2시간`, `updated_at = now()` (요청당 UPDATE 1번 이하, `disableRefresh`) (FR-020, FR-022, SC-005) in `src/server/dal.ts`
-- [ ] T029 [P] [US2] 유지 세션에서만 그리는 `SessionKeeper`를 새로 만든다 (`GET /api/auth/get-session`으로 7일 연장, `src/lib/auth-client.ts` 사용) (FR-021) in `src/components/session-keeper.tsx`
-- [ ] T030 [US2] 헤더에 `SessionKeeper`를 유지 세션일 때만 그리게 추가한다 (town 소유 파일에 추가) in `src/components/site-header.tsx` (depends on T029)
-- [ ] T031 [US2] `signIn(prev, formData)` Server Action을 고친다: 아이디 `normalizeName`(앞뒤 공백·대문자 무시), 빈 칸 `아이디와 비밀번호를 적어 주세요`, 없는 아이디·틀린 비밀번호 모두 `아이디 또는 비밀번호가 맞지 않아요`, `rememberMe` 전달, 성공 시 `/town` (FR-015~FR-017, contracts/auth-entry.md 3장) in `src/app/(auth)/actions.ts`
-- [ ] T032 [US2] `signOut()` Server Action을 추가한다: 확인 없이 세션 행 삭제·쿠키 삭제 → `/` (FR-029, contracts/auth-entry.md 5장) in `src/app/(auth)/actions.ts`
-- [ ] T033 [P] [US2] 로그아웃 버튼을 `signOut` Server Action 폼으로 바꾸고 누르는 영역을 44×44px로 (FR-029, FR-054) in `src/components/sign-out-button.tsx`
-- [ ] T034 [US2] 로그인 폼에 [로그인 상태 유지] 체크박스(기본 선택 안 됨)와 처리 중 `들어가는 중...`·비활성 버튼을 넣는다 (FR-018, FR-019) in `src/components/login-buttons.tsx`
+- [x] T026 [US2] `src/db/schema.ts`에 `sessions.remember_me` **boolean NOT NULL DEFAULT false**와 새 표 `loginAttempts`(`login_attempts`: `username` text PK + CHECK `char_length(username) BETWEEN 1 AND 64`, `failed_count` integer NOT NULL DEFAULT 0 + CHECK `failed_count >= 0`, `locked_until` timestamptz NULL, `updated_at` timestamptz NOT NULL DEFAULT now(), `users` FK 없음)를 추가하고 `npm run db:generate`로 마이그레이션 A4 "로그인 유지·시도 제한"을 만들어 적용한다 (FR-019~FR-021, FR-025) in `src/db/schema.ts`, `drizzle/`
+- [x] T027 [US2] `src/lib/auth.ts`에 세션 설정을 넣는다: `session.additionalFields.rememberMe`(→ `remember_me`), 유지 안 함 세션은 `expires_at` = 지금 + 2시간·쿠키 Max-Age 없음, 유지 세션은 7일·라이브러리 1시간 단위 연장, 세션 생성 훅, 쿠키 `HttpOnly`·`SameSite=Lax`·배포(`https`) 때 `Secure` (FR-020, FR-021, FR-023, research R6·R14) in `src/lib/auth.ts`
+- [x] T028 [US2] `getSession()`에 2시간 규칙을 넣는다: `remember_me = false`이고 `updated_at < now() - 2시간`이면 세션 행을 지우고 로그아웃으로 처리, 아니면 5분 단위로 `expires_at = now() + 2시간`, `updated_at = now()` (요청당 UPDATE 1번 이하, `disableRefresh`) (FR-020, FR-022, SC-005) in `src/server/dal.ts`
+- [x] T029 [P] [US2] 유지 세션에서만 그리는 `SessionKeeper`를 새로 만든다 (`GET /api/auth/get-session`으로 7일 연장, `src/lib/auth-client.ts` 사용) (FR-021) in `src/components/session-keeper.tsx`
+- [x] T030 [US2] 헤더에 `SessionKeeper`를 유지 세션일 때만 그리게 추가한다 (town 소유 파일에 추가) in `src/components/site-header.tsx` (depends on T029)
+- [x] T031 [US2] `signIn(prev, formData)` Server Action을 고친다: 아이디 `normalizeName`(앞뒤 공백·대문자 무시), 빈 칸 `아이디와 비밀번호를 적어 주세요`, 없는 아이디·틀린 비밀번호 모두 `아이디 또는 비밀번호가 맞지 않아요`, `rememberMe` 전달, 성공 시 `/town` (FR-015~FR-017, contracts/auth-entry.md 3장) in `src/app/(auth)/actions.ts`
+- [x] T032 [US2] `signOut()` Server Action을 추가한다: 확인 없이 세션 행 삭제·쿠키 삭제 → `/` (FR-029, contracts/auth-entry.md 5장) in `src/app/(auth)/actions.ts`
+- [x] T033 [P] [US2] 로그아웃 버튼을 `signOut` Server Action 폼으로 바꾸고 누르는 영역을 44×44px로 (FR-029, FR-054) in `src/components/sign-out-button.tsx`
+- [x] T034 [US2] 로그인 폼에 [로그인 상태 유지] 체크박스(기본 선택 안 됨)와 처리 중 `들어가는 중...`·비활성 버튼을 넣는다 (FR-018, FR-019) in `src/components/login-buttons.tsx`
 
 **Checkpoint**: User Stories 1과 2가 각각 단독으로 동작한다
 
