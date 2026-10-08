@@ -297,7 +297,7 @@ description: "글 (POST) 영역 구현 작업 목록"
 **Purpose**: 문서 갱신, 품질 관문, quickstart 전체 검증
 
 - [x] T083 [P] `docs/02-erd.md`(post 담당 부분)를 data-model.md §8 표대로 고친다: 1장 관계도 `post_views`·`attachments.detached_at`, 2장, 3.7 복합 PK, 3.9 첨부(붙이는 규칙·누가 여나·트리거·`npm run posts:cleanup`·다시 올리기), 3.14 삭제 규칙, 3.16 `attachments (post_id)` ⏳ 지움, 3.17 `view_count` 반정규화 설명, 3.18 트리거 `posts_clear_subcategory`와 손으로 고친 `SET NULL (subcategory_id)`, 4장 이전 B, 7장 3·6-3 완료, 부록 NULL 허용 `attachments.detached_at` (plan 남은 문제 2는 팀 확인 후)
-- [ ] T084 [P] `docs/01-requirements.md`의 POST-01~09 구현 방식·상태를 갱신하고 변경 이력 한 줄을 더한다 (constitution II)
+- [x] T084 [P] `docs/01-requirements.md`의 POST-01~09 구현 방식·상태를 갱신하고 변경 이력 한 줄을 더한다 (constitution II)
 - [x] T085 [P] `README.md`, `CLAUDE.md`의 스크립트 표에 `test:post`, `posts:cleanup`을, 규칙에 첨부(글에 붙음·비공개 첨부 주인만·하루 뒤 정리)와 조회수(같은 브라우저 하루 1번) 한 줄씩을 더한다
 - [x] T086 `npx tsc --noEmit`, `npx eslint`, `npm test`(`test:game` → `test:ids` → `test:sanitize` → `test:post`)를 돌려 오류 0·모두 `✅`인지 확인한다 (quickstart §1)
 - [x] T087 quickstart.md §2(마이그레이션 적용 뒤 제약·트리거·표 확인, 이전 B 결과 data-model §7.2 개수)와 §3 E2E 순서(`blog.mjs` → `post-write` → `post-lists` → `post-categories` → `post-views` → `attachment-links` → `post-drafts`, 회귀 `write-count`·`attachments`·`params`·`visits`·`social`·`farm`)를 실행하고, `npm run posts:cleanup -- --dry-run`과 실제 실행을 손으로 돌린다
