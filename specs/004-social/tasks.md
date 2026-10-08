@@ -182,11 +182,11 @@ description: "교류 (SOCIAL) 구현 작업 목록"
 
 **⚠️ 선행**: game 단계 6(알림 표 `notifications` + 기록 도우미)이 `main`에 merge되어 있어야 한다 (plan 의존성 D-2)
 
-- [ ] T047 [US3] `src/app/blog/actions.ts`의 `toggleLike`에서 공감 행이 **새로 들어갔고** 글 주인 ≠ 나이면(보상 여부·하루 상한과 상관없이) 같은 트랜잭션에서 `notifyActivity(tx, { recipientId: 글 주인, actorId: 나, kind: "like", postId })`를 부른다. 취소·동시 요청으로 새 행 없음·내 글은 부르지 않는다 (FR-033, contracts/notification-triggers.md 3절)
-- [ ] T048 [US2] `src/app/blog/actions.ts`의 `addComment`에서 저장 성공 AND 글 주인 ≠ 나이면 `notifyActivity(tx, { recipientId: 글 주인, actorId: 나, kind: "comment", postId })`를 부른다 (FR-055, 의존 T047과 같은 파일이므로 순서대로)
-- [ ] T049 [US5] `src/app/blog/actions.ts`의 `addReply`에서 저장 성공 AND 원댓글 작성자 ≠ 나이면 `notifyActivity(tx, { recipientId: 원댓글 작성자, actorId: 나, kind: "reply", postId: 원댓글의 글 ID })`를 부른다. 글 주인에게는 남기지 않는다 (FR-056, 의존 T048)
-- [ ] T050 [P] [US3] `e2e/social.mjs`에 2차 항목 추가: B가 A의 글에 공감 → A에게 공감 알림 1행, A가 자기 글 공감 → 0, 공감 → 취소 → 공감 → 공감 알림 2행 (US3-9, quickstart 7절)
-- [ ] T051 [P] [US2] `e2e/comments.mjs`에 2차 항목 추가: B가 A의 글에 댓글 → A에게 1행 / A가 자기 글에 댓글 → 0, B가 C의 댓글(A의 글)에 답글 → C에게 1행·A에게 0, C가 자기 댓글에 답글 → 0, 알림 링크 `/@{slug}/{postId}#comments`로 댓글 영역 스크롤 (US2-16, US5-13, quickstart 7절)
+- [x] T047 [US3] `src/app/blog/actions.ts`의 `toggleLike`에서 공감 행이 **새로 들어갔고** 글 주인 ≠ 나이면(보상 여부·하루 상한과 상관없이) 같은 트랜잭션에서 `notifyActivity(tx, { recipientId: 글 주인, actorId: 나, kind: "like", postId })`를 부른다. 취소·동시 요청으로 새 행 없음·내 글은 부르지 않는다 (FR-033, contracts/notification-triggers.md 3절)
+- [x] T048 [US2] `src/app/blog/actions.ts`의 `addComment`에서 저장 성공 AND 글 주인 ≠ 나이면 `notifyActivity(tx, { recipientId: 글 주인, actorId: 나, kind: "comment", postId })`를 부른다 (FR-055, 의존 T047과 같은 파일이므로 순서대로)
+- [x] T049 [US5] `src/app/blog/actions.ts`의 `addReply`에서 저장 성공 AND 원댓글 작성자 ≠ 나이면 `notifyActivity(tx, { recipientId: 원댓글 작성자, actorId: 나, kind: "reply", postId: 원댓글의 글 ID })`를 부른다. 글 주인에게는 남기지 않는다 (FR-056, 의존 T048)
+- [x] T050 [P] [US3] `e2e/social.mjs`에 2차 항목 추가: B가 A의 글에 공감 → A에게 공감 알림 1행, A가 자기 글 공감 → 0, 공감 → 취소 → 공감 → 공감 알림 2행 (US3-9, quickstart 7절)
+- [x] T051 [P] [US2] `e2e/comments.mjs`에 2차 항목 추가: B가 A의 글에 댓글 → A에게 1행 / A가 자기 글에 댓글 → 0, B가 C의 댓글(A의 글)에 답글 → C에게 1행·A에게 0, C가 자기 댓글에 답글 → 0, 알림 링크 `/@{slug}/{postId}#comments`로 댓글 영역 스크롤 (US2-16, US5-13, quickstart 7절)
 
 **Checkpoint**: 공감·댓글·답글 알림이 같은 트랜잭션에서 기록된다
 
