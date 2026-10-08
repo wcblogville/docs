@@ -170,14 +170,14 @@ description: "회원 / 인증 (AUTH) 구현 작업 목록"
 
 ### Tests for User Story 5
 
-- [ ] T051 [P] [US5] `e2e/auth.mjs` 5~9번을 고친다: 비로그인 `/admin` 404·`최근 가입` 없음, 일반 회원 `/admin` 404·관리자 글 삭제 조작 거부·[👑 관리자] 없음, 관리자 화면 카드 5개(`주민 (온보딩 완료)` 없음)·최근 가입(`온보딩 전` 없음, 로그인 방식 `아이디`)·최근 글, 삭제 확인 창 `'{제목}' 글을 삭제할까요?`, 375px 가로 스크롤 없음·[삭제]·링크 44px (quickstart 4.1) in `e2e/auth.mjs`
+- [x] T051 [P] [US5] `e2e/auth.mjs` 5~9번을 고친다: 비로그인 `/admin` 404·`최근 가입` 없음, 일반 회원 `/admin` 404·관리자 글 삭제 조작 거부·[👑 관리자] 없음, 관리자 화면 카드 5개(`주민 (온보딩 완료)` 없음)·최근 가입(`온보딩 전` 없음, 로그인 방식 `아이디`)·최근 글, 삭제 확인 창 `'{제목}' 글을 삭제할까요?`, 375px 가로 스크롤 없음·[삭제]·링크 44px (quickstart 4.1) in `e2e/auth.mjs`
 
 ### Implementation for User Story 5
 
-- [ ] T052 [US5] 관리자 계정 스크립트를 고친다: `ADMIN_PASSWORD` 12~64자(미만이면 `관리자 비밀번호는 12자 이상이어야 해요`, 종료 코드 1, DB 변화 없음), `ADMIN_USERNAME` 형식 `^[a-z0-9_]{4,20}$`, 아이디와 같은 비밀번호 거부, 새 회원 ID는 `newAuthId()`, 없으면 관리자(`role = 'admin'`, 닉네임 `관리자`, `char_boy`·초원, 블로그 `notice` / `Blogville 공지사항` / 대분류 "공지", 🪙 100 없음)를 만들고 있으면 비밀번호만 갱신, 32자가 아닌 예전 ID는 바꾸지 않고 다시 만드는 방법만 안내 (FR-048, FR-049, contracts/admin.md 3장) in `scripts/create-admin.ts`
-- [ ] T053 [US5] 관리자 화면을 고친다: 통계 카드 5개(가입 계정 · 전체 글 · 댓글(삭제 제외, `comments` + social의 `replies`) · 오늘 새 글(한국 시간 0시 이후) · 오늘 출석), `주민 (온보딩 완료)`·`온보딩 전` 삭제, 최근 가입 최신 20명(아이디(로그인 방식 `아이디`/`카카오`/`네이버`/`Google`) · 닉네임 · 블로그 링크 · 권한 · 가입 시각), 최근 30일·최대 30개 글 최신순, 375px에서 표 대신 쌓인 목록, 링크 44px, `requireAdmin()` 404 (FR-043~FR-046, FR-054, contracts/admin.md 1장; `replies` 합산은 social 5단계 뒤) in `src/app/admin/page.tsx`
-- [ ] T054 [P] [US5] [삭제] 버튼 누르는 영역을 44×44px로 넓힌다 (확인 창 `'{제목}' 글을 삭제할까요?`와 `adminDeletePost` 동작은 그대로) (FR-047, FR-054) in `src/app/admin/delete-button.tsx`
-- [ ] T055 [US5] `npm run admin:create`를 quickstart 4.6 1~4번대로 확인한다(두 번 실행, 12자 미만, UUID 36자 예전 ID, 새 ID 32자) 결과를 PR에 적는다
+- [x] T052 [US5] 관리자 계정 스크립트를 고친다: `ADMIN_PASSWORD` 12~64자(미만이면 `관리자 비밀번호는 12자 이상이어야 해요`, 종료 코드 1, DB 변화 없음), `ADMIN_USERNAME` 형식 `^[a-z0-9_]{4,20}$`, 아이디와 같은 비밀번호 거부, 새 회원 ID는 `newAuthId()`, 없으면 관리자(`role = 'admin'`, 닉네임 `관리자`, `char_boy`·초원, 블로그 `notice` / `Blogville 공지사항` / 대분류 "공지", 🪙 100 없음)를 만들고 있으면 비밀번호만 갱신, 32자가 아닌 예전 ID는 바꾸지 않고 다시 만드는 방법만 안내 (FR-048, FR-049, contracts/admin.md 3장) in `scripts/create-admin.ts`
+- [x] T053 [US5] 관리자 화면을 고친다: 통계 카드 5개(가입 계정 · 전체 글 · 댓글(삭제 제외, `comments` + social의 `replies`) · 오늘 새 글(한국 시간 0시 이후) · 오늘 출석), `주민 (온보딩 완료)`·`온보딩 전` 삭제, 최근 가입 최신 20명(아이디(로그인 방식 `아이디`/`카카오`/`네이버`/`Google`) · 닉네임 · 블로그 링크 · 권한 · 가입 시각), 최근 30일·최대 30개 글 최신순, 375px에서 표 대신 쌓인 목록, 링크 44px, `requireAdmin()` 404 (FR-043~FR-046, FR-054, contracts/admin.md 1장; `replies` 합산은 social 5단계 뒤) in `src/app/admin/page.tsx`
+- [x] T054 [P] [US5] [삭제] 버튼 누르는 영역을 44×44px로 넓힌다 (확인 창 `'{제목}' 글을 삭제할까요?`와 `adminDeletePost` 동작은 그대로) (FR-047, FR-054) in `src/app/admin/delete-button.tsx`
+- [x] T055 [US5] `npm run admin:create`를 quickstart 4.6 1~4번대로 확인한다(두 번 실행, 12자 미만, UUID 36자 예전 ID, 새 ID 32자) 결과를 PR에 적는다
 
 **Checkpoint**: 관리자 기능이 단독으로 동작하고 관리자가 아니면 존재가 드러나지 않는다
 
@@ -191,16 +191,16 @@ description: "회원 / 인증 (AUTH) 구현 작업 목록"
 
 ### Tests for User Story 6
 
-- [ ] T056 [P] [US6] 로그인 제한 순수 함수 단위 테스트를 추가한다: 4번째 시도까지 잠금 아님, 5번째 시도 예약 → 5분 잠금, 잠금 중 시도 → 거부·변화 없음, 잠금이 풀린 뒤 시도 → 1, 성공 → 초기화 (quickstart 2장) in `scripts/test-auth.ts`
-- [ ] T057 [P] [US6] `e2e/login-limit.mjs`를 새로 만든다: quickstart 4.4의 1~8번(5번 실패 → 6번째 `로그인을 너무 많이 시도했어요. 5분 뒤에 다시 시도해 주세요`, `locked_until` 과거 → 성공·행 없음, 3번 실패 → 성공 → 4번 실패 → 성공, 없는 아이디도 같은 문구, 동시 10개, `Next-Action` 헤더 직접 5번, 잠긴 아이디 `/api/auth/sign-in/username` 404, 서로 다른/같은 아이디 12개 동시 요청 30초 안 응답) in `e2e/login-limit.mjs`
+- [x] T056 [P] [US6] 로그인 제한 순수 함수 단위 테스트를 추가한다: 4번째 시도까지 잠금 아님, 5번째 시도 예약 → 5분 잠금, 잠금 중 시도 → 거부·변화 없음, 잠금이 풀린 뒤 시도 → 1, 성공 → 초기화 (quickstart 2장) in `scripts/test-auth.ts`
+- [x] T057 [P] [US6] `e2e/login-limit.mjs`를 새로 만든다: quickstart 4.4의 1~8번(5번 실패 → 6번째 `로그인을 너무 많이 시도했어요. 5분 뒤에 다시 시도해 주세요`, `locked_until` 과거 → 성공·행 없음, 3번 실패 → 성공 → 4번 실패 → 성공, 없는 아이디도 같은 문구, 동시 10개, `Next-Action` 헤더 직접 5번, 잠긴 아이디 `/api/auth/sign-in/username` 404, 서로 다른/같은 아이디 12개 동시 요청 30초 안 응답) in `e2e/login-limit.mjs`
 
 ### Implementation for User Story 6
 
-- [ ] T058 [P] [US6] 5번·5분 규칙과 다음 상태 계산 순수 함수를 새로 만든다 (data-model.md 2.4 상태 전이: 행 없음 → n=1, n=1~3 → n+1, n=4 → 잠금(`locked_until` = now()+5분, n=0), 잠금 중 → 그대로·거부, 풀린 뒤 → n=1·`locked_until` NULL) (FR-025, FR-026) in `src/lib/login-limit.ts`
-- [ ] T059 [US6] 아이디별 실패 기록 모듈을 새로 만든다(`import "server-only"`): 비밀번호 확인 **전에** 짧은 트랜잭션에서 `pg_advisory_xact_lock(<로그인 잠금 번호>, hashtext(username))`으로 시도를 예약(잠금이면 거부), 성공 시 행 삭제, 트랜잭션 안에서 라이브러리나 다른 DB 연결을 쓰지 않음 (FR-025~FR-028, research R8) in `src/server/login-attempts.ts` (depends on T058)
-- [ ] T060 [US6] `signIn`에 시도 제한을 넣는다: 예약 트랜잭션이 끝난 뒤 라이브러리 로그인 호출, 잠금이면 `로그인을 너무 많이 시도했어요. 5분 뒤에 다시 시도해 주세요`(없는 아이디도 같은 문구), 성공 시 초기화. 소셜 로그인에는 적용하지 않음 (FR-025~FR-028, SC-004, SC-006) in `src/app/(auth)/actions.ts`
-- [ ] T061 [US6] `createMember`에서 그 아이디의 `login_attempts` 행을 지운다 (data-model.md 2.6 순서 3) in `src/server/signup.ts`
-- [ ] T062 [P] [US6] 개발 초기화에서 `login_attempts`도 비운다. 단 `to_regclass('public.login_attempts')`가 NULL이 아닐 때만 (FK가 없어 CASCADE로 안 비워짐, data-model.md 2.4) in `scripts/reset-dev.ts`
+- [x] T058 [P] [US6] 5번·5분 규칙과 다음 상태 계산 순수 함수를 새로 만든다 (data-model.md 2.4 상태 전이: 행 없음 → n=1, n=1~3 → n+1, n=4 → 잠금(`locked_until` = now()+5분, n=0), 잠금 중 → 그대로·거부, 풀린 뒤 → n=1·`locked_until` NULL) (FR-025, FR-026) in `src/lib/login-limit.ts`
+- [x] T059 [US6] 아이디별 실패 기록 모듈을 새로 만든다(`import "server-only"`): 비밀번호 확인 **전에** 짧은 트랜잭션에서 `pg_advisory_xact_lock(<로그인 잠금 번호>, hashtext(username))`으로 시도를 예약(잠금이면 거부), 성공 시 행 삭제, 트랜잭션 안에서 라이브러리나 다른 DB 연결을 쓰지 않음 (FR-025~FR-028, research R8) in `src/server/login-attempts.ts` (depends on T058)
+- [x] T060 [US6] `signIn`에 시도 제한을 넣는다: 예약 트랜잭션이 끝난 뒤 라이브러리 로그인 호출, 잠금이면 `로그인을 너무 많이 시도했어요. 5분 뒤에 다시 시도해 주세요`(없는 아이디도 같은 문구), 성공 시 초기화. 소셜 로그인에는 적용하지 않음 (FR-025~FR-028, SC-004, SC-006) in `src/app/(auth)/actions.ts`
+- [x] T061 [US6] `createMember`에서 그 아이디의 `login_attempts` 행을 지운다 (data-model.md 2.6 순서 3) in `src/server/signup.ts`
+- [x] T062 [P] [US6] 개발 초기화에서 `login_attempts`도 비운다. 단 `to_regclass('public.login_attempts')`가 NULL이 아닐 때만 (FK가 없어 CASCADE로 안 비워짐, data-model.md 2.4) in `scripts/reset-dev.ts`
 
 **Checkpoint**: 시도 제한이 화면·직접 요청 모두에 같게 적용되고, 아이디 존재 여부가 드러나지 않는다
 
