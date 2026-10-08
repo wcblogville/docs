@@ -32,9 +32,9 @@ description: "회원 / 인증 (AUTH) 구현 작업 목록"
 
 **Purpose**: 구현 전 확인과 테스트 스크립트 골격
 
-- [ ] T001 의존성을 설치한 체크아웃에서 [research.md 구현 전 확인 목록](research.md#구현-전-확인-목록) 16건(특히 3 세션 훅, 7 소셜 가입 막기 오류 코드·이메일 없는 소셜 계정, 9 서버 연동 호출, 12 Server Action Origin 불일치 응답 코드)을 Better Auth 1.7·Next.js 16 소스로 확인하고, 결과가 설계와 다르면 plan.md 남은 문제에 적는다 (`node_modules/better-auth`, `node_modules/next`)
-- [ ] T002 [P] `scripts/test-auth.ts`를 새로 만들고(기존 `scripts/test-*.ts` 형식, `❌` 출력·종료 코드 1 관례) `package.json`의 `scripts`에 `"test:auth": "tsx scripts/test-auth.ts"`를 추가하고 `test` 체인 끝(`test:game → test:ids → test:sanitize → test:auth`)에 잇는다
-- [ ] T003 [P] 마이그레이션 적용 전 점검 SQL(data-model.md 4장 "적용 전 점검": `username IS NULL` 회원, `username !~ '^[a-z0-9_]{4,20}$'` 회원, (`user_id`, `provider_id`) 2행 이상 묶음, 다른 회원 아이디와 같은 주소·`lower(닉네임)`)을 로컬 DB에서 돌려 0행인지 확인하고, 아니면 `npm run db:reset` 한다 (`.env.local`의 `ADMIN_USERNAME` 형식·`ADMIN_PASSWORD` 12자 이상도 함께 맞춘다, research R13)
+- [x] T001 의존성을 설치한 체크아웃에서 [research.md 구현 전 확인 목록](research.md#구현-전-확인-목록) 16건(특히 3 세션 훅, 7 소셜 가입 막기 오류 코드·이메일 없는 소셜 계정, 9 서버 연동 호출, 12 Server Action Origin 불일치 응답 코드)을 Better Auth 1.7·Next.js 16 소스로 확인하고, 결과가 설계와 다르면 plan.md 남은 문제에 적는다 (`node_modules/better-auth`, `node_modules/next`)
+- [x] T002 [P] `scripts/test-auth.ts`를 새로 만들고(기존 `scripts/test-*.ts` 형식, `❌` 출력·종료 코드 1 관례) `package.json`의 `scripts`에 `"test:auth": "tsx scripts/test-auth.ts"`를 추가하고 `test` 체인 끝(`test:game → test:ids → test:sanitize → test:auth`)에 잇는다
+- [x] T003 [P] 마이그레이션 적용 전 점검 SQL(data-model.md 4장 "적용 전 점검": `username IS NULL` 회원, `username !~ '^[a-z0-9_]{4,20}$'` 회원, (`user_id`, `provider_id`) 2행 이상 묶음, 다른 회원 아이디와 같은 주소·`lower(닉네임)`)을 로컬 DB에서 돌려 0행인지 확인하고, 아니면 `npm run db:reset` 한다 (`.env.local`의 `ADMIN_USERNAME` 형식·`ADMIN_PASSWORD` 12자 이상도 함께 맞춘다, research R13)
 
 ---
 
@@ -44,19 +44,19 @@ description: "회원 / 인증 (AUTH) 구현 작업 목록"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 마이그레이션 A1 "가입 미완료 회원 정리"를 직접 쓴 SQL로 만든다: 프로필이 없는 `users` 행 삭제(세션·로그인 수단 CASCADE), 여러 번 실행해도 안전 (FR-007) in `drizzle/` (`npx drizzle-kit generate --custom --name=auth_drop_incomplete_members`)
-- [ ] T005 `src/db/schema.ts`의 `users` 블록을 고친다: `username` text **NOT NULL** UK + CHECK `users_username_check` (`username ~ '^[a-z0-9_]{4,20}$'`) (FR-002, FR-003). `profiles` 블록: CHECK `profiles_nickname_check`를 2~**20**자로 교체, `photo_key` **text NULL** + FK `profiles_photo_key_fk` → `attachments(key)` `ON DELETE SET NULL` 추가, 스키마 주석 "profiles 행이 있다 = 온보딩을 마친 회원"을 "가입 때 함께 생긴다"로 수정 (FR-009, ERD 3.9) in `src/db/schema.ts`
-- [ ] T006 T005를 바탕으로 `npm run db:generate`로 마이그레이션 A2 "아이디 필수·닉네임 20자"와 A3 "프로필 사진 칸"을 만들고(각 SQL 맨 위에 AUTH-07·AUTH-03 주석), A1 → A2 → A3 순서로 `npm run db:migrate` 적용 뒤 프로필 없는 회원 0명을 확인한다 in `drizzle/`
-- [ ] T007 [P] `newAuthId()`(32자 영문 대소문자·숫자)를 새로 만든다 (가입·관리자 스크립트 공용, FR-049) in `src/lib/auth-id.ts`
-- [ ] T008 [P] 이름 규칙 공용 모듈을 새로 만든다: `RESERVED_NAMES` 16개(지금 온보딩 안의 11개 + `notice` 등, 값은 blog FR-009 소유), `normalizeName(raw)`(앞뒤 공백 제거·소문자), `isReservedName(name)`, `USERNAME_RE = /^[a-z0-9_]{4,20}$/`, 닉네임 길이 2~20 확인 함수 (FR-002, FR-009, FR-010) in `src/lib/names.ts`
-- [ ] T009 서버 이름 모듈을 새로 만든다(`import "server-only"`): `lockName(tx, name)`(대소문자 무시 이름 단위 advisory 잠금), `findNameConflict(tx, name, { exceptUserId })` → `{ username, slug, nickname }`(다른 회원의 `users.username`·`blogs.slug`·`lower(profiles.nickname)`과 대소문자 무시 비교). blog가 주소·닉네임 변경에 그대로 쓴다 (FR-003, FR-009, FR-010, research R3) in `src/server/names.ts` (depends on T008)
-- [ ] T010 `src/server/dal.ts`를 고친다: `requireUser` 삭제, `getViewer()`가 `null` 또는 `{ userId, user, sessionId, profile: { nickname, characterAsset, blogId, blogSlug, blogTitle } }`(프로필 필수)를 돌려주게, `requireMember()`는 비로그인 → `/`, `requireAdmin()`은 비로그인·일반 회원 모두 `notFound()` (FR-007, FR-022, FR-043, research R12) in `src/server/dal.ts`
-- [ ] T011 `src/lib/auth.ts`에서 이메일 가입과 소셜 가입을 끈다(`disableSignUp`, 이메일·소셜 모두), 가입 요청으로 `role`을 정할 수 없게 한다 (FR-011, FR-013, research R5·R9) in `src/lib/auth.ts`
-- [ ] T012 라이브러리 HTTP를 허용 목록(세션 확인 `get-session`, OAuth 콜백, 임시로 `sign-in/social`)만 통과시키고 나머지는 404로 돌려주게 고친다 (FR-007, FR-011, FR-028, FR-041, contracts/auth-entry.md 6장) in `src/app/api/auth/[...all]/route.ts`
-- [ ] T013 [P] 온보딩 화면을 지운다: `src/app/onboarding/page.tsx`, `src/app/onboarding/actions.ts`, `src/app/onboarding/onboarding-form.tsx` 삭제 (FR-007)
-- [ ] T014 [P] 없어지는 라우트 참조를 정리한다 (town 합의): `src/app/town/page.tsx`의 온보딩 redirect 한 줄 삭제, `src/components/exit-button.tsx` `HIDDEN_ON`에서 `/onboarding` 삭제
-- [ ] T015 [P] 내 정보 화면 골격을 새로 만든다: `requireMember()`, 제목, blog가 닉네임 칸을 올릴 자리(빈 영역) (FR-036, blog 2단계 선행) in `src/app/settings/account/page.tsx`
-- [ ] T016 [P] 이름 규칙 단위 테스트를 추가한다: `" Tester_1 "` → `tester_1` 통과, 한글·특수문자·3자·21자 거부, `admin`·`Admin`·`settings`·`notice`·`onboarding` 예약어, `tester1`은 아님, 닉네임 2~20자만 통과 (quickstart 2장) in `scripts/test-auth.ts`
+- [x] T004 마이그레이션 A1 "가입 미완료 회원 정리"를 직접 쓴 SQL로 만든다: 프로필이 없는 `users` 행 삭제(세션·로그인 수단 CASCADE), 여러 번 실행해도 안전 (FR-007) in `drizzle/` (`npx drizzle-kit generate --custom --name=auth_drop_incomplete_members`)
+- [x] T005 `src/db/schema.ts`의 `users` 블록을 고친다: `username` text **NOT NULL** UK + CHECK `users_username_check` (`username ~ '^[a-z0-9_]{4,20}$'`) (FR-002, FR-003). `profiles` 블록: CHECK `profiles_nickname_check`를 2~**20**자로 교체, `photo_key` **text NULL** + FK `profiles_photo_key_fk` → `attachments(key)` `ON DELETE SET NULL` 추가, 스키마 주석 "profiles 행이 있다 = 온보딩을 마친 회원"을 "가입 때 함께 생긴다"로 수정 (FR-009, ERD 3.9) in `src/db/schema.ts`
+- [x] T006 T005를 바탕으로 `npm run db:generate`로 마이그레이션 A2 "아이디 필수·닉네임 20자"와 A3 "프로필 사진 칸"을 만들고(각 SQL 맨 위에 AUTH-07·AUTH-03 주석), A1 → A2 → A3 순서로 `npm run db:migrate` 적용 뒤 프로필 없는 회원 0명을 확인한다 in `drizzle/`
+- [x] T007 [P] `newAuthId()`(32자 영문 대소문자·숫자)를 새로 만든다 (가입·관리자 스크립트 공용, FR-049) in `src/lib/auth-id.ts`
+- [x] T008 [P] 이름 규칙 공용 모듈을 새로 만든다: `RESERVED_NAMES` 16개(지금 온보딩 안의 11개 + `notice` 등, 값은 blog FR-009 소유), `normalizeName(raw)`(앞뒤 공백 제거·소문자), `isReservedName(name)`, `USERNAME_RE = /^[a-z0-9_]{4,20}$/`, 닉네임 길이 2~20 확인 함수 (FR-002, FR-009, FR-010) in `src/lib/names.ts`
+- [x] T009 서버 이름 모듈을 새로 만든다(`import "server-only"`): `lockName(tx, name)`(대소문자 무시 이름 단위 advisory 잠금), `findNameConflict(tx, name, { exceptUserId })` → `{ username, slug, nickname }`(다른 회원의 `users.username`·`blogs.slug`·`lower(profiles.nickname)`과 대소문자 무시 비교). blog가 주소·닉네임 변경에 그대로 쓴다 (FR-003, FR-009, FR-010, research R3) in `src/server/names.ts` (depends on T008)
+- [x] T010 `src/server/dal.ts`를 고친다: `requireUser` 삭제, `getViewer()`가 `null` 또는 `{ userId, user, sessionId, profile: { nickname, characterAsset, blogId, blogSlug, blogTitle } }`(프로필 필수)를 돌려주게, `requireMember()`는 비로그인 → `/`, `requireAdmin()`은 비로그인·일반 회원 모두 `notFound()` (FR-007, FR-022, FR-043, research R12) in `src/server/dal.ts`
+- [x] T011 `src/lib/auth.ts`에서 이메일 가입과 소셜 가입을 끈다(`disableSignUp`, 이메일·소셜 모두), 가입 요청으로 `role`을 정할 수 없게 한다 (FR-011, FR-013, research R5·R9) in `src/lib/auth.ts`
+- [x] T012 라이브러리 HTTP를 허용 목록(세션 확인 `get-session`, OAuth 콜백, 임시로 `sign-in/social`)만 통과시키고 나머지는 404로 돌려주게 고친다 (FR-007, FR-011, FR-028, FR-041, contracts/auth-entry.md 6장) in `src/app/api/auth/[...all]/route.ts`
+- [x] T013 [P] 온보딩 화면을 지운다: `src/app/onboarding/page.tsx`, `src/app/onboarding/actions.ts`, `src/app/onboarding/onboarding-form.tsx` 삭제 (FR-007)
+- [x] T014 [P] 없어지는 라우트 참조를 정리한다 (town 합의): `src/app/town/page.tsx`의 온보딩 redirect 한 줄 삭제, `src/components/exit-button.tsx` `HIDDEN_ON`에서 `/onboarding` 삭제
+- [x] T015 [P] 내 정보 화면 골격을 새로 만든다: `requireMember()`, 제목, blog가 닉네임 칸을 올릴 자리(빈 영역) (FR-036, blog 2단계 선행) in `src/app/settings/account/page.tsx`
+- [x] T016 [P] 이름 규칙 단위 테스트를 추가한다: `" Tester_1 "` → `tester_1` 통과, 한글·특수문자·3자·21자 거부, `admin`·`Admin`·`settings`·`notice`·`onboarding` 예약어, `tester1`은 아님, 닉네임 2~20자만 통과 (quickstart 2장) in `scripts/test-auth.ts`
 
 **Checkpoint**: Foundation ready — `npx tsc --noEmit`, `npx eslint`, `npm test` 통과. user story 구현을 시작할 수 있다
 
@@ -72,17 +72,17 @@ description: "회원 / 인증 (AUTH) 구현 작업 목록"
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T017 [P] [US1] `e2e/signup.mjs`를 새로 만든다: quickstart 4.2의 1~16번(첫 화면 표시, 대문자 아이디 + 여자 주민 가입 결과, 대문자 중복, 형식 오류, 비밀번호 7자/65자, 오류 뒤 입력 유지, 예약어 `admin`·`settings`·`notice`·`Admin`, 남의 주소·닉네임과 같은 아이디, 동시 가입, `role=admin`·비기본 캐릭터 조작, 트리거로 마지막 단계 실패 시 0행, 로그인 상태 `/` → `/town`, 키보드만으로 가입, 1분·4칸, 라이브러리 HTTP 직접 POST 404, 375px). 아이디는 `` `su${Date.now() % 100_000_000}` `` 관례 in `e2e/signup.mjs`
-- [ ] T018 [P] [US1] `loginDev`를 고친다: 가입 폼에서 캐릭터를 고르고 온보딩을 기다리지 않고 바로 `/town` 도착을 기다린다 in `e2e/helpers.mjs`
-- [ ] T019 [P] [US1] `e2e/auth.mjs` 1~4번을 고친다: 온보딩 확인 삭제, 가입 뒤 `/town`과 환영 문구 `{닉네임}님, Blogville에 오신 걸 환영해요! …`, `이미 있는 아이디예요`, `비밀번호가 서로 달라요`, 틀린/맞는 비밀번호 (quickstart 4.1) in `e2e/auth.mjs`
+- [x] T017 [P] [US1] `e2e/signup.mjs`를 새로 만든다: quickstart 4.2의 1~16번(첫 화면 표시, 대문자 아이디 + 여자 주민 가입 결과, 대문자 중복, 형식 오류, 비밀번호 7자/65자, 오류 뒤 입력 유지, 예약어 `admin`·`settings`·`notice`·`Admin`, 남의 주소·닉네임과 같은 아이디, 동시 가입, `role=admin`·비기본 캐릭터 조작, 트리거로 마지막 단계 실패 시 0행, 로그인 상태 `/` → `/town`, 키보드만으로 가입, 1분·4칸, 라이브러리 HTTP 직접 POST 404, 375px). 아이디는 `` `su${Date.now() % 100_000_000}` `` 관례 in `e2e/signup.mjs`
+- [x] T018 [P] [US1] `loginDev`를 고친다: 가입 폼에서 캐릭터를 고르고 온보딩을 기다리지 않고 바로 `/town` 도착을 기다린다 in `e2e/helpers.mjs`
+- [x] T019 [P] [US1] `e2e/auth.mjs` 1~4번을 고친다: 온보딩 확인 삭제, 가입 뒤 `/town`과 환영 문구 `{닉네임}님, Blogville에 오신 걸 환영해요! …`, `이미 있는 아이디예요`, `비밀번호가 서로 달라요`, 틀린/맞는 비밀번호 (quickstart 4.1) in `e2e/auth.mjs`
 
 ### Implementation for User Story 1
 
-- [ ] T020 [US1] 가입 트랜잭션 `createMember`를 새로 만든다(`import "server-only"`). data-model.md 2.6 순서 그대로: 0) `lockName(tx, 아이디)` → `findNameConflict` → 예약어면 `이 아이디는 쓸 수 없어요`, 겹치면 `이미 있는 아이디예요`, 고른 아이템이 `items.type = 'character' AND is_starter`인지와 `bg_meadow` 확인(아니면 거부, 제안 문구 `고를 수 없는 캐릭터예요`), 1) `users`(`id` = `newAuthId()`, `name` = 아이디, `email` = `{아이디}@users.blogville.invalid`, `email_verified` = false, `display_username` = 아이디, `role` 넣지 않음), 2) `accounts` credential(`hashPassword` 해시, `account_id` = `users.id`), 4) `user_items` (고른 캐릭터, `bg_meadow`), 5) `profiles`(`nickname` = 아이디, `character_item_id` = 고른 캐릭터), 6) `blogs`(`slug` = 아이디, `title` = `{아이디}의 블로그`, `description` = `''`, `background_item_id` = 초원), 7) `categories`("일상", `position` = 0), 8) `lockUser(tx, 회원)` → `grantReward(tx, 회원, "signup")`. UNIQUE 위반(`users_username_unique`, `users_email_unique`, `blogs_slug_unique`, `profiles_nickname_unique`)은 `이미 있는 아이디예요`로 바꾼다. 하나라도 실패하면 전부 롤백 (FR-003, FR-006, FR-010, FR-011, FR-012) in `src/server/signup.ts`
-- [ ] T021 [US1] `signUp(prev, formData)` Server Action을 고친다: zod로 아이디(`normalizeName` 뒤 `USERNAME_RE`, 실패 `아이디는 영문 소문자, 숫자, _ 로 4~20자예요`), 비밀번호 8~64자(8자 미만 `비밀번호는 8자 이상이에요`, 64자 초과 거부), 확인 불일치 `비밀번호가 서로 달라요`, 캐릭터 아이템 번호 검사 → `createMember` → 커밋 뒤 `signInUsername`으로 로그인 상태 만들기 → `/town?welcome=1`로 이동. 오류 시 입력한 아이디·캐릭터를 돌려준다 (FR-002~FR-005, FR-008, FR-011, contracts/auth-entry.md 2장, research R1·R2) in `src/app/(auth)/actions.ts`
-- [ ] T022 [US1] 가입 폼을 고친다: [로그인] [회원가입] 탭(처음 [로그인]), 아이디 칸 아래 `영문 소문자, 숫자, _ 로 4~20자`, 비밀번호 칸 `비밀번호 (8자 이상)`·`maxLength=64`, 캐릭터 고르기 2개(남자 주민 기본 선택), 오류는 [회원가입] 바로 위 빨간 굵은 글씨 한 줄, 처리 중 `가입하는 중...`·비활성, 탭·버튼 누르는 영역 44×44px·글자 한 줄·초점 테두리 (FR-001, FR-002, FR-004, FR-005, FR-054) in `src/components/login-buttons.tsx`
-- [ ] T023 [US1] 첫 화면을 고친다: 로그인한 회원은 `/town`으로 이동, 기본 캐릭터 목록(`is_starter` 캐릭터)을 서버에서 읽어 폼에 전달 (FR-001, FR-014, contracts/auth-entry.md 1장) in `src/app/page.tsx`
-- [ ] T024 [US1] `e2e/signup.mjs`, `e2e/auth.mjs` 1~4, 회귀 e2e(`blog`·`visits`·`params`·`write-count`·`attachments`·`farm`·`mobile`)를 돌려 가입·로그인 단계 실패가 없는지 확인하고 결과를 PR에 적는다. `e2e/social.mjs`의 "온보딩 전 회원" 준비 블록은 social에 교체를 요청한다 (quickstart 3장)
+- [x] T020 [US1] 가입 트랜잭션 `createMember`를 새로 만든다(`import "server-only"`). data-model.md 2.6 순서 그대로: 0) `lockName(tx, 아이디)` → `findNameConflict` → 예약어면 `이 아이디는 쓸 수 없어요`, 겹치면 `이미 있는 아이디예요`, 고른 아이템이 `items.type = 'character' AND is_starter`인지와 `bg_meadow` 확인(아니면 거부, 제안 문구 `고를 수 없는 캐릭터예요`), 1) `users`(`id` = `newAuthId()`, `name` = 아이디, `email` = `{아이디}@users.blogville.invalid`, `email_verified` = false, `display_username` = 아이디, `role` 넣지 않음), 2) `accounts` credential(`hashPassword` 해시, `account_id` = `users.id`), 4) `user_items` (고른 캐릭터, `bg_meadow`), 5) `profiles`(`nickname` = 아이디, `character_item_id` = 고른 캐릭터), 6) `blogs`(`slug` = 아이디, `title` = `{아이디}의 블로그`, `description` = `''`, `background_item_id` = 초원), 7) `categories`("일상", `position` = 0), 8) `lockUser(tx, 회원)` → `grantReward(tx, 회원, "signup")`. UNIQUE 위반(`users_username_unique`, `users_email_unique`, `blogs_slug_unique`, `profiles_nickname_unique`)은 `이미 있는 아이디예요`로 바꾼다. 하나라도 실패하면 전부 롤백 (FR-003, FR-006, FR-010, FR-011, FR-012) in `src/server/signup.ts`
+- [x] T021 [US1] `signUp(prev, formData)` Server Action을 고친다: zod로 아이디(`normalizeName` 뒤 `USERNAME_RE`, 실패 `아이디는 영문 소문자, 숫자, _ 로 4~20자예요`), 비밀번호 8~64자(8자 미만 `비밀번호는 8자 이상이에요`, 64자 초과 거부), 확인 불일치 `비밀번호가 서로 달라요`, 캐릭터 아이템 번호 검사 → `createMember` → 커밋 뒤 `signInUsername`으로 로그인 상태 만들기 → `/town?welcome=1`로 이동. 오류 시 입력한 아이디·캐릭터를 돌려준다 (FR-002~FR-005, FR-008, FR-011, contracts/auth-entry.md 2장, research R1·R2) in `src/app/(auth)/actions.ts`
+- [x] T022 [US1] 가입 폼을 고친다: [로그인] [회원가입] 탭(처음 [로그인]), 아이디 칸 아래 `영문 소문자, 숫자, _ 로 4~20자`, 비밀번호 칸 `비밀번호 (8자 이상)`·`maxLength=64`, 캐릭터 고르기 2개(남자 주민 기본 선택), 오류는 [회원가입] 바로 위 빨간 굵은 글씨 한 줄, 처리 중 `가입하는 중...`·비활성, 탭·버튼 누르는 영역 44×44px·글자 한 줄·초점 테두리 (FR-001, FR-002, FR-004, FR-005, FR-054) in `src/components/login-buttons.tsx`
+- [x] T023 [US1] 첫 화면을 고친다: 로그인한 회원은 `/town`으로 이동, 기본 캐릭터 목록(`is_starter` 캐릭터)을 서버에서 읽어 폼에 전달 (FR-001, FR-014, contracts/auth-entry.md 1장) in `src/app/page.tsx`
+- [x] T024 [US1] `e2e/signup.mjs`, `e2e/auth.mjs` 1~4, 회귀 e2e(`blog`·`visits`·`params`·`write-count`·`attachments`·`farm`·`mobile`)를 돌려 가입·로그인 단계 실패가 없는지 확인하고 결과를 PR에 적는다. `e2e/social.mjs`의 "온보딩 전 회원" 준비 블록은 social에 교체를 요청한다 (quickstart 3장)
 
 **Checkpoint**: User Story 1이 단독으로 동작한다. 다른 spec의 e2e 전제(새 `loginDev`)가 준비된다
 
