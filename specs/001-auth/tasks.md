@@ -122,16 +122,16 @@ description: "회원 / 인증 (AUTH) 구현 작업 목록"
 
 ### Tests for User Story 3
 
-- [ ] T035 [P] [US3] 소셜 화면 표시 확인을 `e2e/signup.mjs` 1번에 맞춘다: 키 없는 서비스 버튼 흐림·비활성, 마우스를 올리면 `아직 연결 준비 중이에요`, 셋 다 없으면 `간편 로그인은 준비 중이에요`, `처음이라면 회원가입 후 내 정보에서 연동해 주세요`, `/?error=<연동 없음 코드>` → `연동된 계정이 없어요. 아이디로 로그인한 뒤 내 정보에서 연동해 주세요` in `e2e/signup.mjs`
+- [x] T035 [P] [US3] 소셜 화면 표시 확인을 `e2e/signup.mjs` 1번에 맞춘다: 키 없는 서비스 버튼 흐림·비활성, 마우스를 올리면 `아직 연결 준비 중이에요`, 셋 다 없으면 `간편 로그인은 준비 중이에요`, `처음이라면 회원가입 후 내 정보에서 연동해 주세요`, `/?error=<연동 없음 코드>` → `연동된 계정이 없어요. 아이디로 로그인한 뒤 내 정보에서 연동해 주세요` in `e2e/signup.mjs`
 
 ### Implementation for User Story 3
 
-- [ ] T036 [US3] `src/lib/auth.ts`의 소셜 설정을 고친다: 이메일을 받지 않음(Google 범위 `openid profile`), Google에도 대체 이메일 `mapProfileToUser`, 소셜 토큰을 저장하지 않음(`databaseHooks.account.create.before`에서 토큰·만료·`scope` 칸 비움), 이메일 같음으로 자동 연결 끔, 연동 없는 소셜 계정은 새 회원을 만들지 않고 첫 화면 오류 코드로 돌려보냄 (FR-013, FR-032~FR-035, research R9) in `src/lib/auth.ts`
-- [ ] T037 [US3] 마이그레이션 A5 "소셜 토큰 비우기"를 직접 쓴 SQL로 만든다: `provider_id <> 'credential'`인 행의 `access_token`·`refresh_token`·`id_token`·두 만료 칸·`scope`를 NULL로, 여러 번 실행해도 안전 (FR-035) in `drizzle/`
-- [ ] T038 [US3] `startSocialSignIn(provider, remember)` Server Action을 추가한다: 키가 있는 서비스만 허용, `bv_remember` 쿠키로 [로그인 상태 유지] 전달, 라이브러리 소셜 로그인 주소로 이동 (FR-032, contracts/auth-entry.md 4장, research R7) in `src/app/(auth)/actions.ts`
-- [ ] T039 [US3] 소셜 버튼을 클라이언트 직접 호출에서 `startSocialSignIn` Server Action으로 바꾼다: `간편 로그인` 구분선 아래 [카카오](노랑) [네이버](초록) [Google](흰색) 3칸, 키 없는 버튼 비활성 + `아직 연결 준비 중이에요`, 셋 다 없으면 `간편 로그인은 준비 중이에요`, 안내 `처음이라면 회원가입 후 내 정보에서 연동해 주세요`, 44×44px (FR-030, FR-031, FR-054) in `src/components/login-buttons.tsx`
-- [ ] T040 [US3] 첫 화면이 서비스별 키 준비 여부와 소셜 오류(연동 없음 → `연동된 계정이 없어요. 아이디로 로그인한 뒤 내 정보에서 연동해 주세요`, 취소·미동의 → 문구 없이 그대로)를 폼에 전달하게 한다 (FR-031, FR-033) in `src/app/page.tsx`
-- [ ] T041 [US3] 허용 목록에서 임시로 열어 둔 `sign-in/social`을 뺀다 (T038 뒤, FR-028) in `src/app/api/auth/[...all]/route.ts`
+- [x] T036 [US3] `src/lib/auth.ts`의 소셜 설정을 고친다: 이메일을 받지 않음(Google 범위 `openid profile`), Google에도 대체 이메일 `mapProfileToUser`, 소셜 토큰을 저장하지 않음(`databaseHooks.account.create.before`에서 토큰·만료·`scope` 칸 비움), 이메일 같음으로 자동 연결 끔, 연동 없는 소셜 계정은 새 회원을 만들지 않고 첫 화면 오류 코드로 돌려보냄 (FR-013, FR-032~FR-035, research R9) in `src/lib/auth.ts`
+- [x] T037 [US3] 마이그레이션 A5 "소셜 토큰 비우기"를 직접 쓴 SQL로 만든다: `provider_id <> 'credential'`인 행의 `access_token`·`refresh_token`·`id_token`·두 만료 칸·`scope`를 NULL로, 여러 번 실행해도 안전 (FR-035) in `drizzle/`
+- [x] T038 [US3] `startSocialSignIn(provider, remember)` Server Action을 추가한다: 키가 있는 서비스만 허용, `bv_remember` 쿠키로 [로그인 상태 유지] 전달, 라이브러리 소셜 로그인 주소로 이동 (FR-032, contracts/auth-entry.md 4장, research R7) in `src/app/(auth)/actions.ts`
+- [x] T039 [US3] 소셜 버튼을 클라이언트 직접 호출에서 `startSocialSignIn` Server Action으로 바꾼다: `간편 로그인` 구분선 아래 [카카오](노랑) [네이버](초록) [Google](흰색) 3칸, 키 없는 버튼 비활성 + `아직 연결 준비 중이에요`, 셋 다 없으면 `간편 로그인은 준비 중이에요`, 안내 `처음이라면 회원가입 후 내 정보에서 연동해 주세요`, 44×44px (FR-030, FR-031, FR-054) in `src/components/login-buttons.tsx`
+- [x] T040 [US3] 첫 화면이 서비스별 키 준비 여부와 소셜 오류(연동 없음 → `연동된 계정이 없어요. 아이디로 로그인한 뒤 내 정보에서 연동해 주세요`, 취소·미동의 → 문구 없이 그대로)를 폼에 전달하게 한다 (FR-031, FR-033) in `src/app/page.tsx`
+- [x] T041 [US3] 허용 목록에서 임시로 열어 둔 `sign-in/social`을 뺀다 (T038 뒤, FR-028) in `src/app/api/auth/[...all]/route.ts`
 - [ ] T042 [US3] 소셜 키가 있으면 quickstart 6장 수동 확인(연동 계정 로그인, 연동 없는 계정 안내·회원 수 불변, 같은 이메일 자동 연결 없음)을 하고 결과를 PR에 적는다. 키가 없으면 미확인 항목(SC-007, SC-012, US3 #1·#2·#6)을 PR에 남긴다 (plan 남은 문제 10)
 
 **Checkpoint**: P1 세 이야기(가입·로그인·소셜 로그인)가 모두 동작한다
@@ -146,17 +146,17 @@ description: "회원 / 인증 (AUTH) 구현 작업 목록"
 
 ### Tests for User Story 4
 
-- [ ] T043 [P] [US4] `e2e/account.mjs`를 새로 만들고 quickstart 4.5의 1~11번을 넣는다: 비로그인 `/settings/account` → `/`, `아이디 로그인 · {아이디}`(해제 버튼 없음), [연동하기] 비활성, 블로그 관리 `내 정보` 링크·헤더 캐릭터 배지 이동, DB 연동 행 → `연동됨 ({오늘 날짜})` + [연동 해제], 연동 시작 조작 거부, 같은 회원 카카오 행 추가 UNIQUE 거부, 해제 확인 창 `카카오 연동을 해제할까요? 아이디 로그인은 그대로 쓸 수 있어요`, `credential` 해제 조작 거부, `?linked=kakao`(행 없음) 성공 문구 없음, `?provider=kakao&error=<코드>` → `이미 다른 Blogville 계정에 연동된 카카오 계정이에요`, 375px in `e2e/account.mjs`
+- [x] T043 [P] [US4] `e2e/account.mjs`를 새로 만들고 quickstart 4.5의 1~11번을 넣는다: 비로그인 `/settings/account` → `/`, `아이디 로그인 · {아이디}`(해제 버튼 없음), [연동하기] 비활성, 블로그 관리 `내 정보` 링크·헤더 캐릭터 배지 이동, DB 연동 행 → `연동됨 ({오늘 날짜})` + [연동 해제], 연동 시작 조작 거부, 같은 회원 카카오 행 추가 UNIQUE 거부, 해제 확인 창 `카카오 연동을 해제할까요? 아이디 로그인은 그대로 쓸 수 있어요`, `credential` 해제 조작 거부, `?linked=kakao`(행 없음) 성공 문구 없음, `?provider=kakao&error=<코드>` → `이미 다른 Blogville 계정에 연동된 카카오 계정이에요`, 375px in `e2e/account.mjs`
 
 ### Implementation for User Story 4
 
-- [ ] T044 [US4] `src/db/schema.ts`의 `accounts`에 UNIQUE `accounts_user_provider_uq` (`user_id`, `provider_id`)를 추가하고 `npm run db:generate`로 마이그레이션 A6 "서비스마다 연동 1개"를 만들어 적용한다 (FR-038, FR-039) in `src/db/schema.ts`, `drizzle/`
-- [ ] T045 [US4] 회원의 로그인 수단 목록 조회(서비스별 연동 여부·`accounts.created_at` 연동 날짜)를 새로 만든다(`import "server-only"`) (FR-036) in `src/server/account.ts`
-- [ ] T046 [US4] `startLinkSocial(provider)`와 `unlinkSocial(provider)` Server Action을 새로 만든다: `requireMember()` 본인만, 이미 연동한 서비스·키 없는 서비스·`credential`은 거부, 해제는 그 서비스의 소셜 행만 삭제 (FR-037~FR-042, contracts/account.md 2·3장, research R10) in `src/app/settings/account/actions.ts`
-- [ ] T047 [P] [US4] 클라이언트 폼을 새로 만든다: 서비스별 [연동하기] / `연동됨` / [연동 해제], 해제 확인 창 `{서비스} 연동을 해제할까요? 아이디 로그인은 그대로 쓸 수 있어요`, 44×44px in `src/app/settings/account/account-forms.tsx`
-- [ ] T048 [US4] 내 정보 화면을 채운다: `아이디 로그인 · {아이디}` 줄(해제 버튼 없음), 카카오·네이버·Google 줄, 결과 문구 `{서비스} 계정을 연동했어요`(연동 행이 있을 때만)·`이미 다른 Blogville 계정에 연동된 {서비스} 계정이에요`, 375px 가로 스크롤 없음 (FR-036~FR-041, FR-054, contracts/account.md 1장; 표기 세부는 plan 남은 문제 3을 spec에서 확정한 뒤) in `src/app/settings/account/page.tsx`
-- [ ] T049 [P] [US4] 블로그 관리 화면에 `내 정보` 링크 한 줄을 추가한다 (blog 소유 파일에 추가) in `src/app/settings/blog/page.tsx`
-- [ ] T050 [US4] 헤더 캐릭터 배지를 `/settings/account` 링크로 만든다 (town 소유 파일에 추가, 상태창 입구는 plan 남은 문제 15) in `src/components/site-header.tsx`
+- [x] T044 [US4] `src/db/schema.ts`의 `accounts`에 UNIQUE `accounts_user_provider_uq` (`user_id`, `provider_id`)를 추가하고 `npm run db:generate`로 마이그레이션 A6 "서비스마다 연동 1개"를 만들어 적용한다 (FR-038, FR-039) in `src/db/schema.ts`, `drizzle/`
+- [x] T045 [US4] 회원의 로그인 수단 목록 조회(서비스별 연동 여부·`accounts.created_at` 연동 날짜)를 새로 만든다(`import "server-only"`) (FR-036) in `src/server/account.ts`
+- [x] T046 [US4] `startLinkSocial(provider)`와 `unlinkSocial(provider)` Server Action을 새로 만든다: `requireMember()` 본인만, 이미 연동한 서비스·키 없는 서비스·`credential`은 거부, 해제는 그 서비스의 소셜 행만 삭제 (FR-037~FR-042, contracts/account.md 2·3장, research R10) in `src/app/settings/account/actions.ts`
+- [x] T047 [P] [US4] 클라이언트 폼을 새로 만든다: 서비스별 [연동하기] / `연동됨` / [연동 해제], 해제 확인 창 `{서비스} 연동을 해제할까요? 아이디 로그인은 그대로 쓸 수 있어요`, 44×44px in `src/app/settings/account/account-forms.tsx`
+- [x] T048 [US4] 내 정보 화면을 채운다: `아이디 로그인 · {아이디}` 줄(해제 버튼 없음), 카카오·네이버·Google 줄, 결과 문구 `{서비스} 계정을 연동했어요`(연동 행이 있을 때만)·`이미 다른 Blogville 계정에 연동된 {서비스} 계정이에요`, 375px 가로 스크롤 없음 (FR-036~FR-041, FR-054, contracts/account.md 1장; 표기 세부는 plan 남은 문제 3을 spec에서 확정한 뒤) in `src/app/settings/account/page.tsx`
+- [x] T049 [P] [US4] 블로그 관리 화면에 `내 정보` 링크 한 줄을 추가한다 (blog 소유 파일에 추가) in `src/app/settings/blog/page.tsx`
+- [x] T050 [US4] 헤더 캐릭터 배지를 `/settings/account` 링크로 만든다 (town 소유 파일에 추가, 상태창 입구는 plan 남은 문제 15) in `src/components/site-header.tsx`
 
 **Checkpoint**: 연동·해제가 동작하고, 키가 있으면 User Story 3의 실제 소셜 로그인도 확인할 수 있다
 
