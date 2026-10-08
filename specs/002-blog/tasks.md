@@ -144,20 +144,20 @@ description: "블로그 (BLOG) 구현 작업 목록"
 
 ### Tests for User Story 4
 
-- [ ] T036 [P] [US4] `e2e/blog-showcase.mjs`를 새로 만든다 (quickstart 3.5, 새 회원 + DB로 다 키운 동물 3마리와 알 1개): 미니룸 배경·캐릭터·**닉네임** 배지·애니메이션 주기 2초(US4-1, FR-023·025), 꾸미기에서 배경 변경 반영(US4-2), 없는 그림 키 → 오류 없이 회색 몸통·초원(US4-3), 375px 높이 224px·1280px 256px·아래쪽 테두리 2px만(US4-4), `photo_key` 연결 시 `/files/키` 사진 + 닉네임·없으면 캐릭터 얼굴(US4-5), 도감 카드 3장(알 제외)·없으면 `아직 다 키운 동물이 없어요`(US4-6), [전시하기]/다른 동물/[전시 빼기]·고르지 않으면 빈 자리(US4-7·8), `setShowcaseAnimal`에 남의 동물·알·`99999999999`·`"abc"` → `showcase_animal_id` 그대로(US4-9, SC-008), 세 컨텍스트에서 미니룸·프로필·전시·도감 동일(전시 버튼만 주인)(US4-10)
+- [x] T036 [P] [US4] `e2e/blog-showcase.mjs`를 새로 만든다 (quickstart 3.5, 새 회원 + DB로 다 키운 동물 3마리와 알 1개): 미니룸 배경·캐릭터·**닉네임** 배지·애니메이션 주기 2초(US4-1, FR-023·025), 꾸미기에서 배경 변경 반영(US4-2), 없는 그림 키 → 오류 없이 회색 몸통·초원(US4-3), 375px 높이 224px·1280px 256px·아래쪽 테두리 2px만(US4-4), `photo_key` 연결 시 `/files/키` 사진 + 닉네임·없으면 캐릭터 얼굴(US4-5), 도감 카드 3장(알 제외)·없으면 `아직 다 키운 동물이 없어요`(US4-6), [전시하기]/다른 동물/[전시 빼기]·고르지 않으면 빈 자리(US4-7·8), `setShowcaseAnimal`에 남의 동물·알·`99999999999`·`"abc"` → `showcase_animal_id` 그대로(US4-9, SC-008), 세 컨텍스트에서 미니룸·프로필·전시·도감 동일(전시 버튼만 주인)(US4-10)
 
 ### Implementation for User Story 4
 
-- [ ] T037 [US4] `src/db/schema.ts`의 `blogs` 블록에 `showcaseAnimalId: integer("showcase_animal_id")`(NULL)와 복합 FK `blogs_showcase_owned_fk`: (`owner_id`, `showcase_animal_id`) → `user_animals` (`user_id`, `id`) `.onDelete("set null")`를 추가하고 옆에 "SET NULL (showcase_animal_id)로 생성 SQL을 손질함" 주석을 단다 (B-M3, data-model 2.1, research R-18)
-- [ ] T038 [US4] `npm run db:generate`로 `drizzle/NNNN_blog_showcase.sql`을 만들고 FK 줄을 `ON DELETE SET NULL ("showcase_animal_id")`로 고친 뒤 맨 위에 `-- BLOG-04 (2026-10-07): 전시 동물 한 마리, 복합 FK로 내 동물만 (ERD 3.11)` 주석을 달고 `npm run db:migrate`, `psql \d blogs`로 FK 동작을 확인한다
-- [ ] T039 [P] [US4] `src/server/blog.ts`의 `getBlogBySlug`가 `photoKey`(`profiles.photo_key`, auth 전에는 `null`)와 `showcaseAnimalId`를 함께 돌려주게 고치고, 새 함수 `getGrownAnimals(ownerId)`(`user_animals` `status = 'grown'` + `animal_species.name`·`asset_key`, `{ id, name, assetKey, grownAt }[]`, `grown_at` 최신순, 인덱스 `user_animals_user_status_idx`)를 만든다 (contracts/profile-showcase.md 4절)
-- [ ] T040 [P] [US4] `src/app/settings/blog/actions.ts`에 `setShowcaseAnimal(animalId: number | null)`를 새로 만든다: `requireMember()` → 값이 정확히 `null`이면 `UPDATE blogs SET showcase_animal_id = NULL WHERE owner_id = 나` → 그 밖의 값은 `parseId()` 실패 시 아무것도 안 함 → 고르기는 UPDATE 한 문장으로 `owner_id = 나` AND `EXISTS (user_animals WHERE id = animalId AND user_id = 나 AND status = 'grown')`일 때만 저장 → `revalidatePath("/", "layout")`. 반환·문구 없음 (FR-030·031, research R-19)
-- [ ] T041 [P] [US4] `src/components/character.tsx`의 `MiniRoom`에 선택 prop `showcase?: { assetKey: string; name: string } | null`을 더해 캐릭터 오른쪽에 `animalSvg`(`src/lib/art/animals.ts`)로 그린다. 없으면 빈 자리, 그림을 못 찾으면 그리지 않음. 2초 튀기·높이 224/256px·아래 2px 선은 유지 (FR-023~026·030, research R-20). shop의 가구 층과 자리를 협의한다
-- [ ] T042 [P] [US4] `src/components/blog/blog-header.tsx`에 주인 프로필(프로필 사진 48px 원형 `/files/{photoKey}`, 없으면 캐릭터 얼굴 + 닉네임)을 더하고, 미니룸 닉네임 배지가 블로그 이름이 아닌 **닉네임**인지 확인한다 (FR-023·028)
-- [ ] T043 [US4] `src/components/blog/animal-collection.tsx`를 새로 만든다 (클라이언트, `useTransition`): 제목 `🏅 동물 도감` *(plan 임시)*, 카드(그림·이름·다 키운 날짜), 없으면 `아직 다 키운 동물이 없어요`, 주인에게만 [전시하기] / `전시 중` + [전시 빼기] *(plan 임시)* 버튼(44×44px)이 `setShowcaseAnimal`을 부름 (FR-029·030, contracts/profile-showcase.md 2절)
-- [ ] T044 [US4] `src/app/blog/[slug]/page.tsx`에서 `getGrownAnimals`를 다른 조회와 `Promise.all`로 병렬 조회하고, `showcaseAnimalId`를 결과 목록에서 찾아(없으면 빈 자리) `MiniRoom`에 넘기고, 블로그 정보 아래에 `AnimalCollection`을 놓는다 (글 목록을 첫 화면 밖으로 밀지 않는 작은 카드 줄, research R-20). 글 화면(`/@주소/글ID`)에는 미니룸 없이 캐릭터 얼굴만 유지 (FR-032)
-- [ ] T045 [US4] post에 `/files/{key}`가 `profiles.photo_key` 첨부를 누구에게나 200으로 내려주도록 요청하고 결과를 확인한다 (contracts/blog-home.md 5절, research R-21)
-- [ ] T046 [US4] `e2e/params.mjs`에 `setShowcaseAnimal` 조작 인자(`undefined`, `"abc"`, `1.5`, `99999999999`)를 더하고 [추가], `node e2e/blog-showcase.mjs <폴더>`와 `node e2e/params.mjs`가 `✅`인지 확인한다
+- [x] T037 [US4] `src/db/schema.ts`의 `blogs` 블록에 `showcaseAnimalId: integer("showcase_animal_id")`(NULL)와 복합 FK `blogs_showcase_owned_fk`: (`owner_id`, `showcase_animal_id`) → `user_animals` (`user_id`, `id`) `.onDelete("set null")`를 추가하고 옆에 "SET NULL (showcase_animal_id)로 생성 SQL을 손질함" 주석을 단다 (B-M3, data-model 2.1, research R-18)
+- [x] T038 [US4] `npm run db:generate`로 `drizzle/NNNN_blog_showcase.sql`을 만들고 FK 줄을 `ON DELETE SET NULL ("showcase_animal_id")`로 고친 뒤 맨 위에 `-- BLOG-04 (2026-10-07): 전시 동물 한 마리, 복합 FK로 내 동물만 (ERD 3.11)` 주석을 달고 `npm run db:migrate`, `psql \d blogs`로 FK 동작을 확인한다
+- [x] T039 [P] [US4] `src/server/blog.ts`의 `getBlogBySlug`가 `photoKey`(`profiles.photo_key`, auth 전에는 `null`)와 `showcaseAnimalId`를 함께 돌려주게 고치고, 새 함수 `getGrownAnimals(ownerId)`(`user_animals` `status = 'grown'` + `animal_species.name`·`asset_key`, `{ id, name, assetKey, grownAt }[]`, `grown_at` 최신순, 인덱스 `user_animals_user_status_idx`)를 만든다 (contracts/profile-showcase.md 4절)
+- [x] T040 [P] [US4] `src/app/settings/blog/actions.ts`에 `setShowcaseAnimal(animalId: number | null)`를 새로 만든다: `requireMember()` → 값이 정확히 `null`이면 `UPDATE blogs SET showcase_animal_id = NULL WHERE owner_id = 나` → 그 밖의 값은 `parseId()` 실패 시 아무것도 안 함 → 고르기는 UPDATE 한 문장으로 `owner_id = 나` AND `EXISTS (user_animals WHERE id = animalId AND user_id = 나 AND status = 'grown')`일 때만 저장 → `revalidatePath("/", "layout")`. 반환·문구 없음 (FR-030·031, research R-19)
+- [x] T041 [P] [US4] `src/components/character.tsx`의 `MiniRoom`에 선택 prop `showcase?: { assetKey: string; name: string } | null`을 더해 캐릭터 오른쪽에 `animalSvg`(`src/lib/art/animals.ts`)로 그린다. 없으면 빈 자리, 그림을 못 찾으면 그리지 않음. 2초 튀기·높이 224/256px·아래 2px 선은 유지 (FR-023~026·030, research R-20). shop의 가구 층과 자리를 협의한다
+- [x] T042 [P] [US4] `src/components/blog/blog-header.tsx`에 주인 프로필(프로필 사진 48px 원형 `/files/{photoKey}`, 없으면 캐릭터 얼굴 + 닉네임)을 더하고, 미니룸 닉네임 배지가 블로그 이름이 아닌 **닉네임**인지 확인한다 (FR-023·028)
+- [x] T043 [US4] `src/components/blog/animal-collection.tsx`를 새로 만든다 (클라이언트, `useTransition`): 제목 `🏅 동물 도감` *(plan 임시)*, 카드(그림·이름·다 키운 날짜), 없으면 `아직 다 키운 동물이 없어요`, 주인에게만 [전시하기] / `전시 중` + [전시 빼기] *(plan 임시)* 버튼(44×44px)이 `setShowcaseAnimal`을 부름 (FR-029·030, contracts/profile-showcase.md 2절)
+- [x] T044 [US4] `src/app/blog/[slug]/page.tsx`에서 `getGrownAnimals`를 다른 조회와 `Promise.all`로 병렬 조회하고, `showcaseAnimalId`를 결과 목록에서 찾아(없으면 빈 자리) `MiniRoom`에 넘기고, 블로그 정보 아래에 `AnimalCollection`을 놓는다 (글 목록을 첫 화면 밖으로 밀지 않는 작은 카드 줄, research R-20). 글 화면(`/@주소/글ID`)에는 미니룸 없이 캐릭터 얼굴만 유지 (FR-032)
+- [x] T045 [US4] post에 `/files/{key}`가 `profiles.photo_key` 첨부를 누구에게나 200으로 내려주도록 요청하고 결과를 확인한다 (contracts/blog-home.md 5절, research R-21)
+- [x] T046 [US4] `e2e/params.mjs`에 `setShowcaseAnimal` 조작 인자(`undefined`, `"abc"`, `1.5`, `99999999999`)를 더하고 [추가], `node e2e/blog-showcase.mjs <폴더>`와 `node e2e/params.mjs`가 `✅`인지 확인한다
 
 **Checkpoint**: P1 스토리 4개 모두 독립적으로 동작
 
@@ -173,23 +173,23 @@ description: "블로그 (BLOG) 구현 작업 목록"
 
 ### Tests for User Story 5
 
-- [ ] T047 [P] [US5] `e2e/categories.mjs`를 새로 만든다 (quickstart 3.3): 대분류 추가(버튼·Enter) 맨 아래·칸 비움, "여행" 아래 "맛집" 맨 끝, 대분류 + 소분류 누름 4번 이하(US5-1·2, SC-007), 같은 이름 → `이미 있는 카테고리예요`·추가 칸 값 남음(US5-3), "여행" 아래 "맛집" 또 → 거부·"공부" 아래 "맛집" → 성공(US5-4), 공백만/21자 → `카테고리 이름을 적어 주세요`/`카테고리 이름은 20자까지예요`·`  여행  ` → `여행`(US5-5), ▲▼ 순서가 블로그 홈·글쓰기 선택과 같음·맨 위 ▲/맨 아래 ▼ 비활성·소분류는 같은 대분류 안에서만·DB `position` 0부터 빈틈 없음·두 탭 동시 추가/이동에도 겹침 없음(US5-6, FR-039), `여행 (5)`/`└ 맛집 (3)`·"여행" 5개·"맛집" 3개(US5-7), 소분류 삭제 확인 창 `'맛집' 소분류를 지울까요? 글은 '여행'에 남아요.` → 글 `subcategory_id` NULL·`category_id` 유지(US5-8), 대분류 삭제 확인 창 `'여행' 카테고리를 지울까요? 글은 남고 '카테고리 없음'이 돼요.` 취소 → 그대로·수락 → 대분류·소분류 삭제·글 두 칸 NULL·`updated_at` 그대로(US5-9), 소분류 글이 있는 회원 `DELETE FROM users` → 오류 없이 CASCADE(FR-005), 다른 블로그 ID·`99999999999`·`abc` 이름 바꾸기 → `잘못된 요청이에요`·삭제/순서/소분류 추가 → 문구 없이 변화 없음·500 없음(US5-10, SC-008·009). post 단계 3 전이면 컬럼 유무를 보고 해당 줄을 건너뜀 표시
+- [x] T047 [P] [US5] `e2e/categories.mjs`를 새로 만든다 (quickstart 3.3): 대분류 추가(버튼·Enter) 맨 아래·칸 비움, "여행" 아래 "맛집" 맨 끝, 대분류 + 소분류 누름 4번 이하(US5-1·2, SC-007), 같은 이름 → `이미 있는 카테고리예요`·추가 칸 값 남음(US5-3), "여행" 아래 "맛집" 또 → 거부·"공부" 아래 "맛집" → 성공(US5-4), 공백만/21자 → `카테고리 이름을 적어 주세요`/`카테고리 이름은 20자까지예요`·`  여행  ` → `여행`(US5-5), ▲▼ 순서가 블로그 홈·글쓰기 선택과 같음·맨 위 ▲/맨 아래 ▼ 비활성·소분류는 같은 대분류 안에서만·DB `position` 0부터 빈틈 없음·두 탭 동시 추가/이동에도 겹침 없음(US5-6, FR-039), `여행 (5)`/`└ 맛집 (3)`·"여행" 5개·"맛집" 3개(US5-7), 소분류 삭제 확인 창 `'맛집' 소분류를 지울까요? 글은 '여행'에 남아요.` → 글 `subcategory_id` NULL·`category_id` 유지(US5-8), 대분류 삭제 확인 창 `'여행' 카테고리를 지울까요? 글은 남고 '카테고리 없음'이 돼요.` 취소 → 그대로·수락 → 대분류·소분류 삭제·글 두 칸 NULL·`updated_at` 그대로(US5-9), 소분류 글이 있는 회원 `DELETE FROM users` → 오류 없이 CASCADE(FR-005), 다른 블로그 ID·`99999999999`·`abc` 이름 바꾸기 → `잘못된 요청이에요`·삭제/순서/소분류 추가 → 문구 없이 변화 없음·500 없음(US5-10, SC-008·009). post 단계 3 전이면 컬럼 유무를 보고 해당 줄을 건너뜀 표시
 
 ### Implementation for User Story 5
 
-- [ ] T048 [US5] `src/db/schema.ts`에 `subcategories` 표를 추가한다: `id` integer identity PK, `category_id` integer NOT NULL FK → `categories.id` `ON DELETE CASCADE`, `name` text NOT NULL + CHECK `subcategories_name_check`: `char_length(name) BETWEEN 1 AND 20`, `position` integer NOT NULL 기본 0, UNIQUE `subcategories_category_name_uq`(`category_id`, `name`), UNIQUE `subcategories_category_id_uq`(`category_id`, `id`). `blog_id`는 두지 않는다 (B-M1, data-model 2.3, research R-10)
-- [ ] T049 [US5] `npm run db:generate`로 `drizzle/NNNN_subcategories.sql`을 만들고 맨 위에 `-- BLOG-05 (2026-10-07): 카테고리 2단계, 소분류 표 (ERD 3.18)` 주석을 단 뒤 `npm run db:migrate`, `psql \d subcategories`로 제약 이름을 확인하고, `scripts/reset-dev.ts`의 TRUNCATE CASCADE가 새 표를 함께 비우는지 확인한다
-- [ ] T050 [US5] `src/app/settings/blog/actions.ts`의 대분류 처리 4개를 고친다: `addCategory`는 트랜잭션 첫 줄 블로그 행 `FOR UPDATE` → `position = MAX + 1` → UNIQUE 위반 `이미 있는 카테고리예요`·실패 시 `values: { name }`; `renameCategory`는 `parseId` 실패 또는 `RETURNING` 0행 → `잘못된 요청이에요`(현재 48-64행은 `{ ok }`); `moveCategory`는 블로그 행 잠금 → `position, id` 순으로 읽어 `swapPosition` → 0부터 다시 매김·방향 `-1`/`1`만; `deleteCategory`는 블로그 행 잠금 → 내 대분류 확인 → (post 단계 3 이후) 그 대분류 글의 `category_id`·`subcategory_id`를 함께 NULL(`updated_at` 유지) → DELETE(소분류 CASCADE) → 남은 대분류 0부터 다시 매김 (FR-033·036·037·039·042, contracts/blog-settings.md 3절, research R-11·R-12)
-- [ ] T051 [US5] `src/app/settings/blog/actions.ts`에 소분류 처리 4개를 새로 만든다: `addSubcategory(categoryId, prev, formData)`(`parseId` 실패·남의 대분류 → `{}`, 블로그 행 잠금, 그 대분류 안 `MAX + 1`, UNIQUE 위반 `이미 있는 카테고리예요`, 이름 규칙은 대분류와 같음), `renameSubcategory(subcategoryId, name)`(`category_id IN (내 블로그 대분류)` `RETURNING` 0행 → `잘못된 요청이에요`), `deleteSubcategory(subcategoryId)`(블로그 행 잠금 → DELETE `RETURNING category_id` → 같은 대분류 남은 소분류 다시 매김), `moveSubcategory(subcategoryId, direction)`(같은 대분류 안에서만 맞바꿈) (FR-034~039·042, contracts/blog-settings.md 4절)
-- [ ] T052 [US5] `src/server/blog.ts`의 `getCategories(blogId, includePrivate)`가 `buildCategoryTree`로 대분류(`id`, `name`, `position`, 글 수)마다 `subcategories`(`id`, `name`, `position`, 글 수) 배열을 돌려주게 고친다. 대분류 글 수는 소분류 글 포함, 주인 관리 화면은 비공개 포함, 소분류 글 수는 post 단계 3 뒤부터 (FR-039·040·056, research R-14)
-- [ ] T053 [US5] `src/app/settings/blog/settings-forms.tsx`의 `CategoryManager`를 트리로 바꾸고 `SubcategoryRow` 컴포넌트를 새로 만든다: 각 줄 ▲▼(가로 배치, 각 44×44px, `aria-label` `{이름} 위로`/`{이름} 아래로`) · 이름 · (글 수) · [이름 바꾸기] [삭제], 맨 위 ▲·맨 아래 ▼ 비활성, 대분류마다 [소분류 추가] → 입력칸(안내 `새 소분류` *(plan 임시)*, `aria-label` `새 소분류 이름` *(plan 임시)*) + [추가](Enter 가능, `addSubcategory.bind(null, 대분류ID)` + `useActionState`), 삭제 확인 창 문구(FR-037·038), 오류는 그 칸·그 줄 아래 빨간 한 줄·입력값 유지 (FR-033~039, research R-24)
-- [ ] T054 [P] [US5] `src/components/blog/category-nav.tsx`를 새로 만든다: `전체 글 (N)`(공개 글 수) 아래 대분류 순서대로, 소분류는 `└ 이름 (N)`으로 들여 씀, 글 없는 카테고리도 `(0)`, 고른 줄은 노란 배경 + 굵게, 링크는 `?category=`/`?sub=`만 남기고 `q`·`page`를 버림, 누르는 영역 44×44px, 768px 미만은 글 목록 위·이상은 왼쪽 220px (FR-040·057·059, contracts/blog-home.md 1.1·1.2)
-- [ ] T055 [US5] `src/app/blog/[slug]/page.tsx`에서 기존 평평한 카테고리 목록을 `CategoryNav`로 바꾸고, `?sub=`를 `parseId`로 읽어 `category`보다 먼저 적용하고, 잘못된 값은 무시(전체 또는 `category`), 없는 번호·다른 블로그 번호는 빈 목록·제목 `전체 글 0개`·선택 표시 없음, 페이지 링크는 고른 `category`/`sub` 유지 (FR-040·056·057, research R-13)
-- [ ] T056 [US5] `src/server/blog.ts`의 `listBlogPosts`에 선택 인자 `subcategoryId`가 post 변경 13으로 들어왔는지 확인하고, 없으면 같은 모양으로 추가만 한다 [추가] (먼저 들어간 쪽을 그대로 씀). 대분류 거르기는 소분류 글 포함
+- [x] T048 [US5] `src/db/schema.ts`에 `subcategories` 표를 추가한다: `id` integer identity PK, `category_id` integer NOT NULL FK → `categories.id` `ON DELETE CASCADE`, `name` text NOT NULL + CHECK `subcategories_name_check`: `char_length(name) BETWEEN 1 AND 20`, `position` integer NOT NULL 기본 0, UNIQUE `subcategories_category_name_uq`(`category_id`, `name`), UNIQUE `subcategories_category_id_uq`(`category_id`, `id`). `blog_id`는 두지 않는다 (B-M1, data-model 2.3, research R-10)
+- [x] T049 [US5] `npm run db:generate`로 `drizzle/NNNN_subcategories.sql`을 만들고 맨 위에 `-- BLOG-05 (2026-10-07): 카테고리 2단계, 소분류 표 (ERD 3.18)` 주석을 단 뒤 `npm run db:migrate`, `psql \d subcategories`로 제약 이름을 확인하고, `scripts/reset-dev.ts`의 TRUNCATE CASCADE가 새 표를 함께 비우는지 확인한다
+- [x] T050 [US5] `src/app/settings/blog/actions.ts`의 대분류 처리 4개를 고친다: `addCategory`는 트랜잭션 첫 줄 블로그 행 `FOR UPDATE` → `position = MAX + 1` → UNIQUE 위반 `이미 있는 카테고리예요`·실패 시 `values: { name }`; `renameCategory`는 `parseId` 실패 또는 `RETURNING` 0행 → `잘못된 요청이에요`(현재 48-64행은 `{ ok }`); `moveCategory`는 블로그 행 잠금 → `position, id` 순으로 읽어 `swapPosition` → 0부터 다시 매김·방향 `-1`/`1`만; `deleteCategory`는 블로그 행 잠금 → 내 대분류 확인 → (post 단계 3 이후) 그 대분류 글의 `category_id`·`subcategory_id`를 함께 NULL(`updated_at` 유지) → DELETE(소분류 CASCADE) → 남은 대분류 0부터 다시 매김 (FR-033·036·037·039·042, contracts/blog-settings.md 3절, research R-11·R-12)
+- [x] T051 [US5] `src/app/settings/blog/actions.ts`에 소분류 처리 4개를 새로 만든다: `addSubcategory(categoryId, prev, formData)`(`parseId` 실패·남의 대분류 → `{}`, 블로그 행 잠금, 그 대분류 안 `MAX + 1`, UNIQUE 위반 `이미 있는 카테고리예요`, 이름 규칙은 대분류와 같음), `renameSubcategory(subcategoryId, name)`(`category_id IN (내 블로그 대분류)` `RETURNING` 0행 → `잘못된 요청이에요`), `deleteSubcategory(subcategoryId)`(블로그 행 잠금 → DELETE `RETURNING category_id` → 같은 대분류 남은 소분류 다시 매김), `moveSubcategory(subcategoryId, direction)`(같은 대분류 안에서만 맞바꿈) (FR-034~039·042, contracts/blog-settings.md 4절)
+- [x] T052 [US5] `src/server/blog.ts`의 `getCategories(blogId, includePrivate)`가 `buildCategoryTree`로 대분류(`id`, `name`, `position`, 글 수)마다 `subcategories`(`id`, `name`, `position`, 글 수) 배열을 돌려주게 고친다. 대분류 글 수는 소분류 글 포함, 주인 관리 화면은 비공개 포함, 소분류 글 수는 post 단계 3 뒤부터 (FR-039·040·056, research R-14)
+- [x] T053 [US5] `src/app/settings/blog/settings-forms.tsx`의 `CategoryManager`를 트리로 바꾸고 `SubcategoryRow` 컴포넌트를 새로 만든다: 각 줄 ▲▼(가로 배치, 각 44×44px, `aria-label` `{이름} 위로`/`{이름} 아래로`) · 이름 · (글 수) · [이름 바꾸기] [삭제], 맨 위 ▲·맨 아래 ▼ 비활성, 대분류마다 [소분류 추가] → 입력칸(안내 `새 소분류` *(plan 임시)*, `aria-label` `새 소분류 이름` *(plan 임시)*) + [추가](Enter 가능, `addSubcategory.bind(null, 대분류ID)` + `useActionState`), 삭제 확인 창 문구(FR-037·038), 오류는 그 칸·그 줄 아래 빨간 한 줄·입력값 유지 (FR-033~039, research R-24)
+- [x] T054 [P] [US5] `src/components/blog/category-nav.tsx`를 새로 만든다: `전체 글 (N)`(공개 글 수) 아래 대분류 순서대로, 소분류는 `└ 이름 (N)`으로 들여 씀, 글 없는 카테고리도 `(0)`, 고른 줄은 노란 배경 + 굵게, 링크는 `?category=`/`?sub=`만 남기고 `q`·`page`를 버림, 누르는 영역 44×44px, 768px 미만은 글 목록 위·이상은 왼쪽 220px (FR-040·057·059, contracts/blog-home.md 1.1·1.2)
+- [x] T055 [US5] `src/app/blog/[slug]/page.tsx`에서 기존 평평한 카테고리 목록을 `CategoryNav`로 바꾸고, `?sub=`를 `parseId`로 읽어 `category`보다 먼저 적용하고, 잘못된 값은 무시(전체 또는 `category`), 없는 번호·다른 블로그 번호는 빈 목록·제목 `전체 글 0개`·선택 표시 없음, 페이지 링크는 고른 `category`/`sub` 유지 (FR-040·056·057, research R-13)
+- [x] T056 [US5] `src/server/blog.ts`의 `listBlogPosts`에 선택 인자 `subcategoryId`가 post 변경 13으로 들어왔는지 확인하고, 없으면 같은 모양으로 추가만 한다 [추가] (먼저 들어간 쪽을 그대로 씀). 대분류 거르기는 소분류 글 포함
 - [ ] T057 [US5] post 단계 3 merge 뒤 관리 화면 소분류 글 수, 블로그 홈 `└ 맛집 (3)`, `?sub=` 거르기, 글쓰기 대분류·소분류 두 칸의 순서가 관리 화면과 같은지(FR-041, post `e2e/post-categories.mjs`) 확인한다
 - [ ] T058 [US5] 대분류·회원 삭제 경로에서 `posts` CHECK 위반이 나지 않는지(post 트리거 `posts_clear_subcategory`) 실제 DB에서 확인하고 결과를 PR에 적는다 (research R-11, plan 남은 문제 10)
-- [ ] T059 [US5] `e2e/params.mjs`에 `?sub=` 이상한 값(`abc`, `1.5`, `99999999999`)과 소분류 4개 Server Action 조작 인자를 더한다 [추가]
-- [ ] T060 [US5] `node e2e/categories.mjs <폴더>`, `node e2e/params.mjs`, `node e2e/blog-home.mjs`(트리 회귀)가 모두 `✅`인지 확인한다
+- [x] T059 [US5] `e2e/params.mjs`에 `?sub=` 이상한 값(`abc`, `1.5`, `99999999999`)과 소분류 4개 Server Action 조작 인자를 더한다 [추가]
+- [x] T060 [US5] `node e2e/categories.mjs <폴더>`, `node e2e/params.mjs`, `node e2e/blog-home.mjs`(트리 회귀)가 모두 `✅`인지 확인한다
 
 **Checkpoint**: 카테고리 2단계가 관리·블로그 홈에서 독립적으로 동작
 
@@ -203,17 +203,17 @@ description: "블로그 (BLOG) 구현 작업 목록"
 
 ### Tests for User Story 6
 
-- [ ] T061 [P] [US6] `e2e/blog-search.mjs`를 새로 만든다 (quickstart 3.4, 실행마다 고유 검색어로 DB에 글 준비): 주인 검색 → 마을 전체 공개 글 중 제목·본문 일치만·최신순 8개·2페이지·카드 윗줄 `{닉네임} · {블로그 이름}`(US6-1), 블로그 이름·닉네임 일치 블로그 묶음·누르면 그 블로그 홈(US6-2), 남의 비공개 글·내 비공개 글 제외(US6-3, SC-008), 없는 검색어 `검색 결과가 없어요`·공백만 `검색어를 적어 주세요`(US6-4), `%`·`_` 검색어는 그 글자 든 글만, `/town`(데스크톱·휴대폰)·`/feed`에 검색창 없음(US6-5, SC-013), 방문자 블로그 홈 검색창 없음·`/@{주소}?q=` → 보통 블로그 홈(US6-6), 회원이 남의 블로그 홈 → 없음·자기 블로그 → 있음(US6-7), 375px 결과 화면 가로 스크롤 0(SC-004)
+- [x] T061 [P] [US6] `e2e/blog-search.mjs`를 새로 만든다 (quickstart 3.4, 실행마다 고유 검색어로 DB에 글 준비): 주인 검색 → 마을 전체 공개 글 중 제목·본문 일치만·최신순 8개·2페이지·카드 윗줄 `{닉네임} · {블로그 이름}`(US6-1), 블로그 이름·닉네임 일치 블로그 묶음·누르면 그 블로그 홈(US6-2), 남의 비공개 글·내 비공개 글 제외(US6-3, SC-008), 없는 검색어 `검색 결과가 없어요`·공백만 `검색어를 적어 주세요`(US6-4), `%`·`_` 검색어는 그 글자 든 글만, `/town`(데스크톱·휴대폰)·`/feed`에 검색창 없음(US6-5, SC-013), 방문자 블로그 홈 검색창 없음·`/@{주소}?q=` → 보통 블로그 홈(US6-6), 회원이 남의 블로그 홈 → 없음·자기 블로그 → 있음(US6-7), 375px 결과 화면 가로 스크롤 0(SC-004)
 
 ### Implementation for User Story 6
 
-- [ ] T062 [US6] `src/server/blog.ts`의 `listFeed`에 선택 인자 `search?: string`을 추가한다 [추가]: 있으면 `visibility = 'public'` AND (`title ILIKE $1 ESCAPE '\'` OR `content_text ILIKE $1 ESCAPE '\'`), 패턴은 `toLikePattern`·바인딩, 최신순(`created_at DESC, id DESC`) 8개씩, 없으면 지금 동작 그대로. social의 `orderFirst`와 같은 함수이므로 나중에 merge하는 쪽이 최신 `main`에 맞춘다 (FR-051, research R-16)
-- [ ] T063 [US6] `src/server/blog.ts`에 `searchBlogs(q)`를 새로 만든다: `blogs.title` 또는 주인 `profiles.nickname` `ILIKE`(이스케이프) 일치 블로그 최대 8곳, 최근 공개 글 순, `{ slug, title, nickname, characterAsset, photoKey }[]` (FR-052, research R-17)
-- [ ] T064 [P] [US6] `src/components/blog/blog-search.tsx`를 새로 만든다: 검색창(GET 폼, 입력칸 `maxLength=50`·`aria-label="검색어"`·안내 `마을의 글·블로그 검색` *(plan 임시)* + [검색] *(plan 임시)*, 44px)과 결과(제목 `🔍 '{검색어}' 검색 결과` *(plan 임시)*, 1페이지에만 블로그 묶음 `블로그` *(plan 임시)* — 캐릭터 얼굴 또는 사진 · `{닉네임} · {블로그 이름}` · `@{주소}` → `/@{주소}`, 글 묶음 `글 N개` *(plan 임시)* — `src/components/blog/post-card.tsx`의 `showAuthor` 카드, 빈 검색어 `검색어를 적어 주세요`, 둘 다 없으면 `검색 결과가 없어요`) (FR-050~053, contracts/blog-home.md 1.4)
-- [ ] T065 [US6] `src/app/blog/[slug]/page.tsx`에 검색 모드를 넣는다: 서버가 주인(`viewer.userId === blog.ownerId`)일 때만 왼쪽 상자 위에 검색창을 그리고 `?q=`를 `parseSearchQuery`로 읽어 검색 모드로 전환(51자 이상은 무시), 주인이 아니면 `q`를 무시하고 보통 블로그 홈, 검색 모드의 페이지 링크는 `q` 유지, 카테고리 트리에 선택 표시 없음, `listFeed({ page, search })`·`searchBlogs`를 병렬 조회 (FR-050·057, SC-013, research R-15)
-- [ ] T066 [US6] 광장(`src/app/town/`)과 마을 소식(`src/app/feed/`)에 검색창이 없는지 확인한다 (FR-050, US6-5)
-- [ ] T067 [US6] `e2e/nonfunctional.mjs`의 대상 목록에 검색 결과 주소(`/@{주인 주소}?q=…`)를 더한다 [추가]
-- [ ] T068 [US6] `node e2e/blog-search.mjs <폴더>`가 모두 `✅`인지 확인한다
+- [x] T062 [US6] `src/server/blog.ts`의 `listFeed`에 선택 인자 `search?: string`을 추가한다 [추가]: 있으면 `visibility = 'public'` AND (`title ILIKE $1 ESCAPE '\'` OR `content_text ILIKE $1 ESCAPE '\'`), 패턴은 `toLikePattern`·바인딩, 최신순(`created_at DESC, id DESC`) 8개씩, 없으면 지금 동작 그대로. social의 `orderFirst`와 같은 함수이므로 나중에 merge하는 쪽이 최신 `main`에 맞춘다 (FR-051, research R-16)
+- [x] T063 [US6] `src/server/blog.ts`에 `searchBlogs(q)`를 새로 만든다: `blogs.title` 또는 주인 `profiles.nickname` `ILIKE`(이스케이프) 일치 블로그 최대 8곳, 최근 공개 글 순, `{ slug, title, nickname, characterAsset, photoKey }[]` (FR-052, research R-17)
+- [x] T064 [P] [US6] `src/components/blog/blog-search.tsx`를 새로 만든다: 검색창(GET 폼, 입력칸 `maxLength=50`·`aria-label="검색어"`·안내 `마을의 글·블로그 검색` *(plan 임시)* + [검색] *(plan 임시)*, 44px)과 결과(제목 `🔍 '{검색어}' 검색 결과` *(plan 임시)*, 1페이지에만 블로그 묶음 `블로그` *(plan 임시)* — 캐릭터 얼굴 또는 사진 · `{닉네임} · {블로그 이름}` · `@{주소}` → `/@{주소}`, 글 묶음 `글 N개` *(plan 임시)* — `src/components/blog/post-card.tsx`의 `showAuthor` 카드, 빈 검색어 `검색어를 적어 주세요`, 둘 다 없으면 `검색 결과가 없어요`) (FR-050~053, contracts/blog-home.md 1.4)
+- [x] T065 [US6] `src/app/blog/[slug]/page.tsx`에 검색 모드를 넣는다: 서버가 주인(`viewer.userId === blog.ownerId`)일 때만 왼쪽 상자 위에 검색창을 그리고 `?q=`를 `parseSearchQuery`로 읽어 검색 모드로 전환(51자 이상은 무시), 주인이 아니면 `q`를 무시하고 보통 블로그 홈, 검색 모드의 페이지 링크는 `q` 유지, 카테고리 트리에 선택 표시 없음, `listFeed({ page, search })`·`searchBlogs`를 병렬 조회 (FR-050·057, SC-013, research R-15)
+- [x] T066 [US6] 광장(`src/app/town/`)과 마을 소식(`src/app/feed/`)에 검색창이 없는지 확인한다 (FR-050, US6-5)
+- [x] T067 [US6] `e2e/nonfunctional.mjs`의 대상 목록에 검색 결과 주소(`/@{주인 주소}?q=…`)를 더한다 [추가]
+- [x] T068 [US6] `node e2e/blog-search.mjs <폴더>`가 모두 `✅`인지 확인한다
 
 **Checkpoint**: 검색이 주인 블로그 홈에서만 독립적으로 동작
 
@@ -227,9 +227,9 @@ description: "블로그 (BLOG) 구현 작업 목록"
 
 ### Implementation for User Story 7
 
-- [ ] T069 [US7] `src/app/blog/[slug]/page.tsx`·`src/components/blog/blog-header.tsx` 변경 뒤에도 `src/components/blog/visit-count.tsx`가 정보 줄 끝에 `오늘 방문 N · 어제 방문 N · 전체 방문 N`(천 단위 쉼표)을 그리고, 주인이 아닐 때만 `recordBlogVisit`(`src/app/blog/actions.ts`, 바뀌지 않음)을 부르는지 확인한다. 검색 모드·`?sub=` 이동에서도 같은 날 다시 세지 않는다 (FR-043~047·049)
-- [ ] T070 [US7] `src/app/settings/blog/page.tsx`의 카드 순서가 `방문자`(최근 7일 막대, 마지막 `오늘` 노란 막대·굵게, 날짜 `10/5`, 안내 `같은 사람은 하루 1번만 셉니다. 블로그 홈이나 글을 연 사람이 방문자이고, 내 방문은 세지 않아요.`) → `기본 정보` → `카테고리`로 유지되는지 확인한다 (FR-048)
-- [ ] T071 [US7] `node e2e/visits.mjs <폴더>`가 모두 `✅`인지 확인한다 (US7-1~8, SC-010)
+- [x] T069 [US7] `src/app/blog/[slug]/page.tsx`·`src/components/blog/blog-header.tsx` 변경 뒤에도 `src/components/blog/visit-count.tsx`가 정보 줄 끝에 `오늘 방문 N · 어제 방문 N · 전체 방문 N`(천 단위 쉼표)을 그리고, 주인이 아닐 때만 `recordBlogVisit`(`src/app/blog/actions.ts`, 바뀌지 않음)을 부르는지 확인한다. 검색 모드·`?sub=` 이동에서도 같은 날 다시 세지 않는다 (FR-043~047·049)
+- [x] T070 [US7] `src/app/settings/blog/page.tsx`의 카드 순서가 `방문자`(최근 7일 막대, 마지막 `오늘` 노란 막대·굵게, 날짜 `10/5`, 안내 `같은 사람은 하루 1번만 셉니다. 블로그 홈이나 글을 연 사람이 방문자이고, 내 방문은 세지 않아요.`) → `기본 정보` → `카테고리`로 유지되는지 확인한다 (FR-048)
+- [x] T071 [US7] `node e2e/visits.mjs <폴더>`가 모두 `✅`인지 확인한다 (US7-1~8, SC-010)
 
 **Checkpoint**: 모든 사용자 스토리가 독립적으로 동작
 
@@ -239,13 +239,13 @@ description: "블로그 (BLOG) 구현 작업 목록"
 
 **Purpose**: 성능 측정, 문서, 전체 검증
 
-- [ ] T072 [P] `e2e/blog-scale.mjs`를 새로 만든다: 전용 회원 블로그에 공개 글 1,000개와 대분류·소분류를 DB로 채움(있으면 건너뜀), 캐시 없는 새 브라우저 컨텍스트로 블로그 홈·대분류 거르기·소분류 거르기·주인 검색 결과 첫 페이지를 각 5번 열어 load 중앙값 출력, 1,000ms 미만 기대 (SC-003·011, NF-07, research R-01)
-- [ ] T073 `npm run build && npm run start`로 프로덕션 빌드에서 `node e2e/blog-scale.mjs <폴더> http://localhost:3000`, `node e2e/nonfunctional.mjs <폴더> http://localhost:3000`을 실행하고 숫자를 PR에 적는다. 1초를 넘으면 post에 `posts(category_id)`·`posts(subcategory_id)`·`pg_trgm` 인덱스를 요청한다 (research R-14·R-16)
-- [ ] T074 [P] `docs/02-erd.md`의 blog 담당 부분을 고친다 (data-model 6절): 1장 `blogs`에 `roof_color` 줄, 3.11 ⏳ 제거와 `ON DELETE SET NULL (showcase_animal_id)` 손질 한 줄, 3.18 대분류 삭제 때 앱이 글 두 칸을 먼저 비운다는 한 줄, 3.14 대분류 줄 보충, 지붕 색 새 절, 7장 할 일 표 완료 표시, 부록 글자 길이·NULL 허용
-- [ ] T075 [P] `README.md` 스크립트 표에 새 e2e 6줄(`blog-home`, `blog-address`, `categories`, `blog-search`, `blog-showcase`, `blog-scale`)을 더한다 [추가]
+- [x] T072 [P] `e2e/blog-scale.mjs`를 새로 만든다: 전용 회원 블로그에 공개 글 1,000개와 대분류·소분류를 DB로 채움(있으면 건너뜀), 캐시 없는 새 브라우저 컨텍스트로 블로그 홈·대분류 거르기·소분류 거르기·주인 검색 결과 첫 페이지를 각 5번 열어 load 중앙값 출력, 1,000ms 미만 기대 (SC-003·011, NF-07, research R-01)
+- [x] T073 `npm run build && npm run start`로 프로덕션 빌드에서 `node e2e/blog-scale.mjs <폴더> http://localhost:3000`, `node e2e/nonfunctional.mjs <폴더> http://localhost:3000`을 실행하고 숫자를 PR에 적는다. 1초를 넘으면 post에 `posts(category_id)`·`posts(subcategory_id)`·`pg_trgm` 인덱스를 요청한다 (research R-14·R-16)
+- [x] T074 [P] `docs/02-erd.md`의 blog 담당 부분을 고친다 (data-model 6절): 1장 `blogs`에 `roof_color` 줄, 3.11 ⏳ 제거와 `ON DELETE SET NULL (showcase_animal_id)` 손질 한 줄, 3.18 대분류 삭제 때 앱이 글 두 칸을 먼저 비운다는 한 줄, 3.14 대분류 줄 보충, 지붕 색 새 절, 7장 할 일 표 완료 표시, 부록 글자 길이·NULL 허용
+- [x] T075 [P] `README.md` 스크립트 표에 새 e2e 6줄(`blog-home`, `blog-address`, `categories`, `blog-search`, `blog-showcase`, `blog-scale`)을 더한다 [추가]
 - [ ] T076 `npx tsc --noEmit`, `npx eslint`, `npm test`와 quickstart 3절 E2E 순서(auth → `blog.mjs` → `blog-home` → `blog-address` → `categories` → `blog-search` → `blog-showcase` → `visits` → `params` → `social` → `mobile`)를 모두 실행한다 (specs/002-blog/quickstart.md)
-- [ ] T077 quickstart 5절 스크린샷(블로그 홈 방문자/주인 1280·375px, 검색 결과, 블로그 관리 오류·트리·44px, 닉네임 칸, 예전 주소 404)을 눈으로 확인한다
-- [ ] T078 PR 본문에 quickstart 6절 항목(정적 검사·단위·E2E 결과 줄, 성능 숫자, R-28 데이터 점검 결과, 건너뛴 시나리오와 이유)과 plan 남은 문제 1의 *(plan 임시)* 문구 목록을 적어 팀 확인을 요청한다 (NF-23, 원칙 III)
+- [x] T077 quickstart 5절 스크린샷(블로그 홈 방문자/주인 1280·375px, 검색 결과, 블로그 관리 오류·트리·44px, 닉네임 칸, 예전 주소 404)을 눈으로 확인한다
+- [x] T078 PR 본문에 quickstart 6절 항목(정적 검사·단위·E2E 결과 줄, 성능 숫자, R-28 데이터 점검 결과, 건너뛴 시나리오와 이유)과 plan 남은 문제 1의 *(plan 임시)* 문구 목록을 적어 팀 확인을 요청한다 (NF-23, 원칙 III)
 
 ---
 
