@@ -212,7 +212,7 @@ description: "캐릭터 / 성장 (GAME) 구현 작업 목록"
 - [x] T068 [US6] `src/components/site-header.tsx`(소유: town, 추가)에 회원일 때만 `NotificationBell`을 끼우고, `getHeaderNotifications` 한 쿼리 결과를 🔔 배지와 `LevelUpPopup`이 함께 쓰게 한다(헤더 쿼리 하나만 늘림, NF-07). 방문자에겐 🔔·팝업·날짜 감시 모두 없음. 375px 공간은 town과 `e2e/mobile.mjs`로 확인 (FR-042, US6-6, research R15) (depends on T056, T067)
 - [x] T069 [US6] social에 요청(단계 7): 공감이 새로 저장될 때(`toggleLike`, 글 주인에게), 남의 글 댓글(`addComment`, 글 주인에게), 답글 등록(원댓글 작성자에게) 트랜잭션 안에서 `notifyActivity()` 호출, 댓글 영역 `src/components/blog/comment-section.tsx`에 `id="comments"` (`specs/004-social/contracts/notification-triggers.md`와 같은 조건). 반복 공감 알림은 spec 문구대로 두고 plan 남은 문제 3으로 확인 (FR-045, research R21)
 - [x] T070 [US6] auth에 확인 요청(단계 9 탈퇴): `notifications.user_id`·`actor_id` CASCADE로 받은 알림·남긴 알림이 함께 지워지는지, `attendances` CASCADE (FR-046)
-- [ ] T071 [US6] blog와 정한다: 새 최상위 주소 `/notifications`를 blog FR-009 예약어 목록에 더할지 (plan 남은 문제 8). 더하기로 하면 blog spec·코드 예약어 목록 수정 요청
+- [x] T071 [US6] blog와 정한다: 새 최상위 주소 `/notifications`를 blog FR-009 예약어 목록에 더할지 (plan 남은 문제 8). 더하기로 하면 blog spec·코드 예약어 목록 수정 요청
 
 **Checkpoint**: 1단계 알림함 완성, 2단계는 social의 `notifyActivity()` 호출만 남음 (SC-012는 social 단계 7 뒤)
 
