@@ -186,8 +186,8 @@ description: "블로그 (BLOG) 구현 작업 목록"
 - [x] T054 [P] [US5] `src/components/blog/category-nav.tsx`를 새로 만든다: `전체 글 (N)`(공개 글 수) 아래 대분류 순서대로, 소분류는 `└ 이름 (N)`으로 들여 씀, 글 없는 카테고리도 `(0)`, 고른 줄은 노란 배경 + 굵게, 링크는 `?category=`/`?sub=`만 남기고 `q`·`page`를 버림, 누르는 영역 44×44px, 768px 미만은 글 목록 위·이상은 왼쪽 220px (FR-040·057·059, contracts/blog-home.md 1.1·1.2)
 - [x] T055 [US5] `src/app/blog/[slug]/page.tsx`에서 기존 평평한 카테고리 목록을 `CategoryNav`로 바꾸고, `?sub=`를 `parseId`로 읽어 `category`보다 먼저 적용하고, 잘못된 값은 무시(전체 또는 `category`), 없는 번호·다른 블로그 번호는 빈 목록·제목 `전체 글 0개`·선택 표시 없음, 페이지 링크는 고른 `category`/`sub` 유지 (FR-040·056·057, research R-13)
 - [x] T056 [US5] `src/server/blog.ts`의 `listBlogPosts`에 선택 인자 `subcategoryId`가 post 변경 13으로 들어왔는지 확인하고, 없으면 같은 모양으로 추가만 한다 [추가] (먼저 들어간 쪽을 그대로 씀). 대분류 거르기는 소분류 글 포함
-- [ ] T057 [US5] post 단계 3 merge 뒤 관리 화면 소분류 글 수, 블로그 홈 `└ 맛집 (3)`, `?sub=` 거르기, 글쓰기 대분류·소분류 두 칸의 순서가 관리 화면과 같은지(FR-041, post `e2e/post-categories.mjs`) 확인한다
-- [ ] T058 [US5] 대분류·회원 삭제 경로에서 `posts` CHECK 위반이 나지 않는지(post 트리거 `posts_clear_subcategory`) 실제 DB에서 확인하고 결과를 PR에 적는다 (research R-11, plan 남은 문제 10)
+- [x] T057 [US5] post 단계 3 merge 뒤 관리 화면 소분류 글 수, 블로그 홈 `└ 맛집 (3)`, `?sub=` 거르기, 글쓰기 대분류·소분류 두 칸의 순서가 관리 화면과 같은지(FR-041, post `e2e/post-categories.mjs`) 확인한다
+- [x] T058 [US5] 대분류·회원 삭제 경로에서 `posts` CHECK 위반이 나지 않는지(post 트리거 `posts_clear_subcategory`) 실제 DB에서 확인하고 결과를 PR에 적는다 (research R-11, plan 남은 문제 10)
 - [x] T059 [US5] `e2e/params.mjs`에 `?sub=` 이상한 값(`abc`, `1.5`, `99999999999`)과 소분류 4개 Server Action 조작 인자를 더한다 [추가]
 - [x] T060 [US5] `node e2e/categories.mjs <폴더>`, `node e2e/params.mjs`, `node e2e/blog-home.mjs`(트리 회귀)가 모두 `✅`인지 확인한다
 
