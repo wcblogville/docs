@@ -1,6 +1,9 @@
 # Blogville Specs (Spec Kit)
 
 `docs/01-requirements.md` v1.18을 바탕으로 GitHub Spec Kit 형식으로 쓴 영역별 spec이다.
+
+> 요구사항 명세서 원본은 코드 저장소 [wcblogville/blogville](https://github.com/wcblogville/blogville)의 `docs/01-requirements.md`에서 코드와 함께 고친다. 이 저장소에 있던 v1.18 사본은 2026-10-14에 지웠다 (git 기록에 남아 있다). 아래 spec들이 말하는 `docs/01-requirements.md`는 코드 저장소의 그 파일이다.
+
 2026-10-07 설계 변경 결정을 목표 동작으로 삼았다. 원칙은 [constitution](../.specify/memory/constitution.md).
 
 | spec | 원본 | User Story | FR | clarify 결정 |
